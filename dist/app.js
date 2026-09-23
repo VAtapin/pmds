@@ -36,13 +36,13 @@
   const courseMeta = {
     2: {
       title: 'Второй курс',
-      description: 'Основы догматики, богопознание, Святая Троица, творение и Промысл.',
+      description: 'Экзаменационный конспект по предоставленным вопросам и материалам.',
       color: 'var(--course-2)',
       soft: 'var(--course-2-soft)'
     },
     3: {
       title: 'Третий курс',
-      description: 'Антропология, христология, искупление и ангелология.',
+      description: 'Краткие, но содержательные ответы на экзаменационные вопросы.',
       color: 'var(--course-3)',
       soft: 'var(--course-3-soft)'
     }
@@ -55,7 +55,7 @@
     return counts;
   }, {});
 
-  const tagEntries = Object.entries(tagCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ru'));
+  const tagEntries = Object.entries(tagCounts);
   const tagMin = Math.min(...tagEntries.map(([, count]) => count));
   const tagMax = Math.max(...tagEntries.map(([, count]) => count));
 
@@ -90,9 +90,15 @@
         <span class="chevron" aria-hidden="true"></span>
       </summary>
       <div class="answer">
-        ${question.answer.split(/\n\n+/).map((paragraph) => `<p>${highlight(paragraph, rawQuery)}</p>`).join('')}
         <p class="takeaway"><strong>Запомнить:</strong> ${highlight(question.takeaway, rawQuery)}</p>
+        ${question.answer.split(/\n\n+/).map((paragraph) => `<p>${highlight(paragraph, rawQuery)}</p>`).join('')}
       </div>`;
+    details.addEventListener('toggle', () => {
+      if (!details.open) return;
+      document.querySelectorAll('.question-card[open]').forEach((card) => {
+        if (card !== details) card.open = false;
+      });
+    });
     return details;
   };
 

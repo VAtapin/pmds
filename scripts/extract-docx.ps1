@@ -121,41 +121,79 @@ function Get-Tags {
         [int]$Number
     )
 
-    $rules = [ordered]@{
-        'Антропология' = 'антрополог|человек|человеческ|душ|тело|образ и подобие'
-        'Грех' = 'грех|падени|зл[оауы]|смерт|тлен|наказани'
-        'Христология' = 'христос|христа|иисус|христолог|воплощ|ипостасн|нестори|кирилл|монофиз|монофел|ариан|аполлинари|македони|монархиан|адопциони|модализм|савели|искуплен|богород|дева мари|феотокол'
-        'Троица' = 'троиц|отец|сына|сын |святого дух|святой дух|ипостась|единосущ|filioque|монархия отца|македони'
-        'Богопознание' = 'богопозн|откровени|апофат|катафат|свойств.*бож|вечност|неизменяем|вездеприсутств|всеведен|благость|правосуд|божественн.*сущност.*энерги'
-        'Догмат и Предание' = 'догмат|предани|собор|священн.*писан'
-        'Творение и Промысл' = 'творени|промысл|чудо|предведени|предопределени|свобод'
-        'Ангелология' = 'ангел|духов|небесн.*иерарх'
-    }
-
-    $tags = [System.Collections.Generic.List[string]]::new()
     $primaryTag = if ($Course -eq 2) {
-        if ($Number -le 3) { 'Догмат и Предание' }
-        elseif ($Number -le 10 -or $Number -eq 18) { 'Богопознание' }
-        elseif ($Number -le 17) { 'Троица' }
-        else { 'Творение и Промысл' }
+        if ($Number -le 2) { 'Богословие' }
+        elseif ($Number -eq 3) { 'Свойства догматов' }
+        elseif ($Number -eq 4) { 'Догмат и ересь' }
+        elseif ($Number -eq 5) { 'Формулы и термины' }
+        elseif ($Number -eq 6) { 'Системы' }
+        elseif ($Number -eq 7) { 'Возникновение догматов' }
+        elseif ($Number -eq 8) { 'Раскрытие догматов' }
+        elseif ($Number -eq 9) { 'Назначение догматов' }
+        elseif ($Number -eq 10) { 'Усвоение догматов' }
+        elseif ($Number -eq 11) { 'Догматическое развитие' }
+        elseif ($Number -le 15) { 'Предание' }
+        elseif ($Number -eq 16) { 'Пути богопознания' }
+        elseif ($Number -eq 17) { 'Аэций' }
+        elseif ($Number -eq 18) { 'Евномий' }
+        elseif ($Number -eq 19) { 'Познаваемость Бога' }
+        elseif ($Number -eq 20) { 'Варлаам' }
+        elseif ($Number -eq 21) { 'Григорий Палама' }
+        elseif ($Number -eq 22) { 'Апофатика и катафатика' }
+        elseif ($Number -eq 23) { 'Апофатические свойства' }
+        elseif ($Number -eq 24) { 'Катафатические свойства' }
+        elseif ($Number -le 27) { 'Догмат о Троице' }
+        elseif ($Number -eq 28) { 'Апологеты' }
+        elseif ($Number -eq 29) { 'Монархианство' }
+        elseif ($Number -eq 30) { 'Ориген' }
+        elseif ($Number -eq 31) { 'Арианство' }
+        elseif ($Number -eq 32) { 'Афанасий Великий' }
+        elseif ($Number -eq 33) { 'Духоборчество' }
+        elseif ($Number -eq 34) { 'Каппадокийцы' }
+        elseif ($Number -eq 35) { 'Бог Отец' }
+        elseif ($Number -eq 36) { 'Бог Сын' }
+        elseif ($Number -eq 37) { 'Святой Дух' }
+        elseif ($Number -eq 38) { 'Filioque' }
+        elseif ($Number -eq 39) { 'Дуализм и пантеизм' }
+        elseif ($Number -le 42) { 'Творение из ничего' }
+        elseif ($Number -eq 43) { 'Троица и творение' }
+        elseif ($Number -le 45) { 'Цель и совершенство творения' }
+        elseif ($Number -le 49) { 'Промысл' }
+        elseif ($Number -le 52) { 'Ангелы' }
+        elseif ($Number -eq 53) { 'Злые духи' }
+        elseif ($Number -eq 54) { 'Образ и подобие' }
+        elseif ($Number -eq 55) { 'Душа, дух и тело' }
+        elseif ($Number -eq 56) { 'Первоначальный человек' }
+        elseif ($Number -le 58) { 'Причины грехопадения' }
+        elseif ($Number -le 60) { 'Последствия грехопадения' }
+        elseif ($Number -le 63) { 'Первородный и личный грех' }
+        elseif ($Number -eq 64) { 'Пелагий' }
+        else { 'Августин' }
     }
-    elseif ($Number -le 2) { 'Антропология' }
-    elseif ($Number -le 8) { 'Грех' }
-    elseif ($Number -le 30) { 'Христология' }
-    else { 'Ангелология' }
+    elseif ($Number -eq 1) { 'Образ и подобие' }
+    elseif ($Number -eq 2) { 'Душа, дух и тело' }
+    elseif ($Number -eq 3) { 'Сущность грехопадения' }
+    elseif ($Number -eq 4) { 'Последствия грехопадения' }
+    elseif ($Number -le 7) { 'Первородный грех' }
+    elseif ($Number -eq 8) { 'Наказание после падения' }
+    elseif ($Number -le 11) { 'Человечество Христа' }
+    elseif ($Number -eq 12) { 'Апологеты и Ориген' }
+    elseif ($Number -eq 13) { 'Монархианство' }
+    elseif ($Number -eq 14) { 'Арианство' }
+    elseif ($Number -eq 15) { 'Аполлинарий' }
+    elseif ($Number -eq 16) { 'Македоний' }
+    elseif ($Number -eq 17) { 'Несторий' }
+    elseif ($Number -eq 18) { 'Кирилл Александрийский' }
+    elseif ($Number -eq 19) { 'Монофизитство' }
+    elseif ($Number -le 22) { 'Ипостасное соединение' }
+    elseif ($Number -eq 23) { 'Монофелитство' }
+    elseif ($Number -eq 24) { 'Христос и Троица' }
+    elseif ($Number -le 26) { 'Богородица' }
+    elseif ($Number -le 30) { 'Искупление' }
+    elseif ($Number -le 35) { 'Ангелы' }
+    else { 'Злые духи' }
 
-    $tags.Add($primaryTag)
-    foreach ($entry in $rules.GetEnumerator()) {
-        if ($Question.ToLowerInvariant() -match $entry.Value -and -not $tags.Contains($entry.Key)) {
-            $tags.Add($entry.Key)
-        }
-    }
-
-    if ($tags.Count -eq 0) {
-        $tags.Add('Общее богословие')
-    }
-
-    $tags.ToArray()
+    @($primaryTag)
 }
 
 $thirdQuestionParagraphs = @(Get-DocxParagraphs -Path $ThirdYearQuestions)
