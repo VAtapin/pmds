@@ -48,31 +48,66 @@
     }
   };
 
-  const tagCounts = questions.reduce((counts, question) => {
-    question.tags.forEach((tag) => {
-      counts[tag] = (counts[tag] || 0) + 1;
-    });
-    return counts;
-  }, {});
+  const filterGroups = [
+    {
+      title: 'Основы догматики',
+      tags: ['Богословие', 'Свойства догматов', 'Догмат и ересь', 'Формулы и термины', 'Системы', 'Возникновение догматов', 'Раскрытие догматов', 'Назначение догматов', 'Усвоение догматов', 'Догматическое развитие', 'Предание']
+    },
+    {
+      title: 'Богопознание',
+      tags: ['Пути богопознания', 'Аэций', 'Евномий', 'Познаваемость Бога', 'Варлаам', 'Григорий Палама', 'Апофатика и катафатика', 'Апофатические свойства', 'Катафатические свойства']
+    },
+    {
+      title: 'Святая Троица',
+      tags: ['Догмат о Троице', 'Апологеты', 'Ориген', 'Афанасий Великий', 'Духоборчество', 'Каппадокийцы', 'Бог Отец', 'Бог Сын', 'Святой Дух', 'Filioque']
+    },
+    {
+      title: 'Творение и Промысл',
+      tags: ['Дуализм и пантеизм', 'Творение из ничего', 'Троица и творение', 'Цель и совершенство творения', 'Промысл']
+    },
+    {
+      title: 'Антропология и грех',
+      tags: ['Образ и подобие', 'Душа, дух и тело', 'Первоначальный человек', 'Причины грехопадения', 'Сущность грехопадения', 'Последствия грехопадения', 'Первородный и личный грех', 'Первородный грех', 'Наказание после падения', 'Пелагий', 'Августин']
+    },
+    {
+      title: 'Христология и Соборы',
+      tags: ['Человечество Христа', 'Апологеты и Ориген', 'Монархианство', 'Арианство', 'Аполлинарий', 'Македоний', 'Несторий', 'Кирилл Александрийский', 'Монофизитство', 'Ипостасное соединение', 'Монофелитство', 'Христос и Троица', 'Богородица']
+    },
+    {
+      title: 'Искупление',
+      tags: ['Искупление']
+    },
+    {
+      title: 'Ангелология',
+      tags: ['Ангелы', 'Злые духи']
+    }
+  ];
 
-  const tagEntries = Object.entries(tagCounts);
-  const tagMin = Math.min(...tagEntries.map(([, count]) => count));
-  const tagMax = Math.max(...tagEntries.map(([, count]) => count));
+  const buildTagCloud = () => {
+    filterGroups.forEach((group) => {
+      const groupBlock = document.createElement('section');
+      groupBlock.className = 'filter-group';
+      groupBlock.innerHTML = `<h3>${group.title}</h3><div class="filter-buttons"></div>`;
+      const buttonsRoot = groupBlock.querySelector('.filter-buttons');
 
-  tagEntries.forEach(([tag, count]) => {
-    const button = document.createElement('button');
-    const scale = tagMax === tagMin ? 0.5 : (count - tagMin) / (tagMax - tagMin);
-    button.type = 'button';
-    button.dataset.tag = tag;
-    button.setAttribute('aria-pressed', 'false');
-    button.style.setProperty('--tag-size', `${0.76 + scale * 0.16}rem`);
-    button.textContent = `${tag} · ${count}`;
-    button.addEventListener('click', () => {
-      activeTag = activeTag === tag ? '' : tag;
-      updateFilters();
+      group.tags.forEach((tag) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.tag = tag;
+        button.setAttribute('aria-pressed', 'false');
+        button.textContent = tag;
+        button.addEventListener('click', () => {
+          activeTag = activeTag === tag ? '' : tag;
+          updateFilters();
+        });
+        buttonsRoot.append(button);
+      });
+
+      tagCloud.append(groupBlock);
     });
-    tagCloud.append(button);
-  });
+  };
+
+  buildTagCloud();
 
   const buildCard = (question, rawQuery) => {
     const details = document.createElement('details');
