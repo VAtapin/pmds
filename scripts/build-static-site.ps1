@@ -1,6 +1,6 @@
 param(
     [string]$ContentPath = (Join-Path $PSScriptRoot '..\content\questions.json'),
-    [string]$OutputPath = (Join-Path $PSScriptRoot '..\dist\questions.js')
+    [string]$OutputPath = (Join-Path $PSScriptRoot '..\dist\dogmatika\questions.js')
 )
 
 Set-StrictMode -Version Latest

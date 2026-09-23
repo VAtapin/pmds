@@ -88,6 +88,28 @@ footer p {
   gap: 1rem;
 }
 
+.masthead__title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.home-link {
+  flex: 0 0 auto;
+  margin-right: 0.7rem;
+  padding-right: 0.7rem;
+  color: #dfe5f0;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.home-link:hover,
+.home-link:focus-visible {
+  color: var(--gold);
+}
+
 h1,
 h2,
 .question-title {
@@ -571,6 +593,13 @@ footer p {
 }
 
 @media (max-width: 620px) {
+  .home-link {
+    max-width: 5.4rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .tag-cloud {
     column-count: 1;
   }
