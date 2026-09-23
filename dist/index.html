@@ -34,10 +34,10 @@
         </label>
 
         <div class="quick-row">
-          <nav class="course-jumps" aria-label="Переход к курсу">
-            <a href="#course-2">2 курс <span id="jump-count-2">65</span></a>
-            <a href="#course-3">3 курс <span id="jump-count-3">38</span></a>
-          </nav>
+          <div class="course-jumps" role="group" aria-label="Курсы для показа">
+            <button type="button" data-course-toggle="2" aria-pressed="true">2 курс <span id="jump-count-2">65</span></button>
+            <button type="button" data-course-toggle="3" aria-pressed="true">3 курс <span id="jump-count-3">38</span></button>
+          </div>
           <button class="reset-button" id="reset-button" type="button" hidden>Сбросить фильтры</button>
           <p class="result-count" id="result-count" aria-live="polite">Показаны все 103 вопроса</p>
         </div>
@@ -51,7 +51,7 @@
     <div class="content-shell">
       <div id="course-sections"></div>
       <section class="empty-state" id="empty-state" hidden>
-        <p>По этому запросу ничего не найдено.</p>
+        <p id="empty-message">По этому запросу ничего не найдено.</p>
         <button type="button" id="empty-reset">Показать все вопросы</button>
       </section>
     </div>

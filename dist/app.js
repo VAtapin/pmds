@@ -1,6 +1,10 @@
 (() => {
   'use strict';
 
+  if (['#course-2', '#course-3'].includes(window.location.hash)) {
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+  }
+
   const data = window.QUESTIONS_DATA;
   const questions = data.questions;
   const searchInput = document.querySelector('#search-input');
@@ -9,7 +13,10 @@
   const resultCount = document.querySelector('#result-count');
   const resetButton = document.querySelector('#reset-button');
   const emptyState = document.querySelector('#empty-state');
+  const emptyMessage = document.querySelector('#empty-message');
   const emptyReset = document.querySelector('#empty-reset');
+  const courseToggles = document.querySelectorAll('[data-course-toggle]');
+  const activeCourses = new Set([2, 3]);
   let activeTag = '';
 
   const normalize = (value) => value
@@ -84,13 +91,24 @@
   ];
 
   const buildTagCloud = () => {
+    const availableTags = new Set(
+      questions
+        .filter((question) => activeCourses.has(question.course))
+        .flatMap((question) => question.tags)
+    );
+
+    if (activeTag && !availableTags.has(activeTag)) activeTag = '';
+    tagCloud.replaceChildren();
+
     filterGroups.forEach((group) => {
+      const visibleTags = group.tags.filter((tag) => availableTags.has(tag));
+      if (!visibleTags.length) return;
       const groupBlock = document.createElement('section');
       groupBlock.className = 'filter-group';
       groupBlock.innerHTML = `<h3>${group.title}</h3><div class="filter-buttons"></div>`;
       const buttonsRoot = groupBlock.querySelector('.filter-buttons');
 
-      group.tags.forEach((tag) => {
+      visibleTags.forEach((tag) => {
         const button = document.createElement('button');
         button.type = 'button';
         button.dataset.tag = tag;
@@ -106,8 +124,6 @@
       tagCloud.append(groupBlock);
     });
   };
-
-  buildTagCloud();
 
   const buildCard = (question, rawQuery) => {
     const details = document.createElement('details');
@@ -151,7 +167,9 @@
 
   const render = () => {
     const rawQuery = searchInput.value.trim();
-    const filtered = questions.filter((question) => matchesFilters(question, rawQuery));
+    const availableQuestions = questions.filter((question) => activeCourses.has(question.course));
+    buildTagCloud();
+    const filtered = availableQuestions.filter((question) => matchesFilters(question, rawQuery));
     sectionsRoot.replaceChildren();
 
     [2, 3].forEach((course) => {
@@ -181,10 +199,16 @@
     document.querySelectorAll('[data-tag]').forEach((button) => {
       button.setAttribute('aria-pressed', String(button.dataset.tag === activeTag));
     });
-    resultCount.textContent = filtered.length === questions.length
-      ? `Показаны все ${questions.length} вопроса`
-      : `Найдено: ${filtered.length} из ${questions.length}`;
-    resetButton.hidden = !rawQuery && !activeTag;
+    courseToggles.forEach((button) => {
+      button.setAttribute('aria-pressed', String(activeCourses.has(Number(button.dataset.courseToggle))));
+    });
+    resultCount.textContent = filtered.length === availableQuestions.length && !rawQuery && !activeTag
+      ? `Показано: ${filtered.length} ${pluralize(filtered.length)}`
+      : `Найдено: ${filtered.length} из ${availableQuestions.length}`;
+    resetButton.hidden = !rawQuery && !activeTag && activeCourses.size === 2;
+    emptyMessage.textContent = activeCourses.size
+      ? 'По этому запросу ничего не найдено.'
+      : 'Выберите 2 или 3 курс выше.';
     emptyState.hidden = filtered.length > 0;
     sectionsRoot.hidden = filtered.length === 0;
   };
@@ -200,6 +224,9 @@
 
   const reset = () => {
     activeTag = '';
+    activeCourses.clear();
+    activeCourses.add(2);
+    activeCourses.add(3);
     searchInput.value = '';
     render();
     searchInput.focus();
@@ -210,6 +237,17 @@
   searchInput.addEventListener('input', () => {
     window.clearTimeout(debounceId);
     debounceId = window.setTimeout(updateFilters, 60);
+  });
+  courseToggles.forEach((button) => {
+    button.addEventListener('click', () => {
+      const course = Number(button.dataset.courseToggle);
+      if (activeCourses.has(course)) {
+        activeCourses.delete(course);
+      } else {
+        activeCourses.add(course);
+      }
+      updateFilters();
+    });
   });
   resetButton.addEventListener('click', reset);
   emptyReset.addEventListener('click', reset);

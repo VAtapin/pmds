@@ -197,7 +197,7 @@ kbd {
   gap: 0.45rem;
 }
 
-.course-jumps a,
+.course-jumps button,
 .reset-button,
 .tag-cloud button,
 .empty-state button {
@@ -208,7 +208,7 @@ kbd {
   transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
 }
 
-.course-jumps a {
+.course-jumps button {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -219,13 +219,37 @@ kbd {
   font-weight: 700;
 }
 
-.course-jumps a span {
+.course-jumps button span {
   color: var(--ink-soft);
   font-weight: 500;
 }
 
-.course-jumps a:hover,
-.course-jumps a:focus-visible,
+.course-jumps button[aria-pressed="true"] {
+  color: white;
+}
+
+.course-jumps button[data-course-toggle="2"][aria-pressed="true"] {
+  background: var(--course-2);
+  border-color: var(--course-2);
+}
+
+.course-jumps button[data-course-toggle="3"][aria-pressed="true"] {
+  background: var(--course-3);
+  border-color: var(--course-3);
+}
+
+.course-jumps button[aria-pressed="true"] span {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.course-jumps button[aria-pressed="false"] {
+  color: #68748a;
+  background: #eef1f6;
+  border-color: #d6dce7;
+}
+
+.course-jumps button:hover,
+.course-jumps button:focus-visible,
 .tag-cloud button:hover,
 .tag-cloud button:focus-visible {
   border-color: #8a96aa;
