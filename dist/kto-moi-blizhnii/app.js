@@ -284,6 +284,7 @@ function renderExcuses() {
     excuses.filter((item) => item.character === character).forEach((item) => {
       const chip = document.createElement('span');
       chip.textContent = item.text;
+      chip.classList.toggle('is-crossed', Boolean(item.crossed));
       preview.append(chip);
     });
   });
@@ -301,11 +302,17 @@ function renderExcuses() {
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'excuse-chip';
-    chip.setAttribute('aria-pressed', 'false');
+    chip.setAttribute('aria-pressed', String(Boolean(item.crossed)));
     chip.textContent = `«${item.text}»`;
     chip.addEventListener('click', () => {
       const pressed = chip.getAttribute('aria-pressed') === 'true';
-      chip.setAttribute('aria-pressed', String(!pressed));
+      item.crossed = !pressed;
+      chip.setAttribute('aria-pressed', String(item.crossed));
+      document.querySelectorAll('[data-excuse-preview]').forEach((preview) => {
+        if (preview.dataset.excusePreview !== item.character) return;
+        const matching = Array.from(preview.children).find((entry) => entry.textContent === item.text);
+        if (matching) matching.classList.toggle('is-crossed', item.crossed);
+      });
       discussionFollowup.textContent = pressed
         ? 'Мог ли самарянин найти себе такое же оправдание?'
         : `Что всё-таки мог сделать ${item.character.toLowerCase()}?`;
@@ -331,7 +338,7 @@ document.querySelectorAll('.excuse-form').forEach((form) => {
       showToast('Такой ответ уже есть на доске');
       return;
     }
-    excuses.push({ character: form.dataset.character, text });
+    excuses.push({ character: form.dataset.character, text, crossed: false });
     input.value = '';
     renderExcuses();
     showToast('Ответ добавлен на доску обсуждения');
@@ -572,7 +579,7 @@ function getSharedState() {
       endsAt: timerDeadline
     },
     roles: Array.from(roleList.children).map((item) => item.textContent),
-    excuses: excuses.map((item) => ({ character: item.character, text: item.text })),
+    excuses: excuses.map((item) => ({ character: item.character, text: item.text, crossed: Boolean(item.crossed) })),
     samaritanReveal: !document.querySelector('.reveal-answer')?.hidden,
     sequence: {
       order: Array.from(sequencePool.querySelectorAll('[data-step]')).map((button) => Number(button.dataset.step)),
@@ -624,7 +631,8 @@ function applySharedState(state) {
     if (Array.isArray(state.excuses)) {
       const nextExcuses = state.excuses.slice(0, 30).map((item) => ({
         character: String(item.character || '').slice(0, 30),
-        text: String(item.text || '').slice(0, 160)
+        text: String(item.text || '').slice(0, 160),
+        crossed: Boolean(item.crossed)
       }));
       if (JSON.stringify(nextExcuses) !== JSON.stringify(excuses)) {
         excuses.splice(0, excuses.length, ...nextExcuses);
@@ -711,7 +719,7 @@ window.lessonApp = {
       showToast('Такой ответ уже опубликован');
       return;
     }
-    excuses.push({ character: safeCharacter, text: safeText });
+    excuses.push({ character: safeCharacter, text: safeText, crossed: false });
     renderExcuses();
     signalStateChange();
   },

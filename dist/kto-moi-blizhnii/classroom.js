@@ -454,8 +454,11 @@
   }
 
   function sharedTeacherState() {
+    const lessonState = window.lessonApp.getSharedState();
+    if (lessonState.samaritanReveal) correctReveals[4] = true;
+    if (lessonState.neighbor === 'samaritan') correctReveals[7] = true;
     return {
-      ...window.lessonApp.getSharedState(),
+      ...lessonState,
       teacherMessage: teacherMessageText,
       celebrationId,
       correctReveals
@@ -595,7 +598,7 @@
 
   const activities = [
     { prompt: 'Готовы начать путь?', type: 'ready', options: [['Готов ✦', 'ready'], ['Есть вопрос', 'question']] },
-    { prompt: 'Какую роль вы готовы сыграть?', type: 'role', options: [['Путешественник', 'traveler'], ['Священник', 'priest'], ['Левит', 'levite'], ['Самарянин', 'samaritan']] },
+    { prompt: 'Какую роль вы готовы сыграть?', type: 'role', options: [['Путешественник', 'traveler'], ['Разбойник 1', 'robber_1'], ['Разбойник 2', 'robber_2'], ['Священник', 'priest'], ['Левит', 'levite'], ['Самарянин', 'samaritan']] },
     { prompt: 'Введите ответ в большом поле на слайде ↑', type: 'excuse', mainField: true },
     { prompt: 'Введите ответ в большом поле на слайде ↑', type: 'excuse', mainField: true },
     { prompt: 'Что повело самарянина к человеку?', type: 'motive', correct: 'compassion', options: [['Сострадание', 'compassion'], ['Награда', 'reward'], ['Любопытство', 'curiosity']] },

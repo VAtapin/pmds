@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Интерактивный урок христианской этики о милосердном самарянине для 6–7 класса.">
+  <meta name="theme-color" content="#183e3b">
+  <title>Кто мой ближний? — интерактивный урок</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23183e3b'/%3E%3Cpath d='M9 45c12-2 13-17 24-17 8 0 10-8 22-9' fill='none' stroke='%23f3c86a' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='13' cy='44' r='5' fill='%23c85c3f'/%3E%3Ccircle cx='54' cy='19' r='5' fill='%23f7efe0'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="lesson-shell">
+    <header class="topbar">
+      <a class="home-link" href="../" aria-label="Вернуться к списку материалов">
+        <span aria-hidden="true">⌂</span>
+        <span class="home-link__text">Материалы</span>
+      </a>
+
+      <div class="lesson-status" aria-live="polite">
+        <span class="lesson-status__eyebrow">Христианская этика</span>
+        <strong id="sceneLabel">Кто мой ближний?</strong>
+      </div>
+
+      <div class="topbar__tools">
+        <div class="room-indicator" id="roomIndicator" hidden>
+          <span id="roomModeLabel">Класс</span>
+          <strong id="roomIndicatorCode">—</strong>
+        </div>
+        <button class="tool-button classroom-button" id="classroomButton" type="button" aria-expanded="false" aria-controls="classroomPanel" hidden>
+          <span aria-hidden="true">♧</span>
+          <span>Класс</span>
+          <strong id="connectedBadge">0</strong>
+        </button>
+        <button class="tool-button timer-button" id="timerButton" type="button" aria-expanded="false" aria-controls="timerPanel">
+          <span aria-hidden="true">◷</span>
+          <span id="timerDisplay">05:00</span>
+        </button>
+        <button class="tool-button" id="fullscreenButton" type="button" aria-label="Открыть на весь экран" title="На весь экран (F)">
+          <span aria-hidden="true">⛶</span>
+        </button>
+      </div>
+
+      <div class="progress-track" aria-hidden="true">
+        <span id="progressBar"></span>
+      </div>
+    </header>
+
+    <section class="timer-panel" id="timerPanel" hidden aria-label="Таймер урока">
+      <p>Таймер обсуждения</p>
+      <div class="timer-panel__presets" aria-label="Выбрать время">
+        <button type="button" data-seconds="60">1 мин</button>
+        <button type="button" data-seconds="120">2 мин</button>
+        <button type="button" data-seconds="300">5 мин</button>
+      </div>
+      <div class="timer-panel__actions">
+        <button class="button button--primary" id="timerToggle" type="button">Старт</button>
+        <button class="button button--quiet" id="timerReset" type="button">Сбросить</button>
+      </div>
+    </section>
+
+    <main class="lesson-stage" id="lessonStage">
+      <section class="scene scene--cover is-active" data-title="Кто мой ближний?" data-default-seconds="300" aria-hidden="false" style="--scene-image: url('assets/scene-road.webp')">
+        <div class="scene__shade"></div>
+        <div class="cover-copy">
+          <p class="kicker">Интерактивный урок · 45 минут</p>
+          <h1>Кто мой<br>ближний?</h1>
+          <p class="cover-copy__subtitle">Притча о милосердном самарянине</p>
+          <p class="scripture-ref">Лк 10:25–37</p>
+          <button class="button button--light" type="button" data-next>Начать урок</button>
+        </div>
+        <div class="cover-question" aria-hidden="true">
+          <span>?</span>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Начало урока · 5 минут</h3>
+          <p>Прочитайте Лк 10:25–37 целиком. После чтения предложите детям разыграть притчу.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--image-right" data-title="Человек на дороге" data-default-seconds="180" aria-hidden="true" style="--scene-image: url('assets/scene-wounded.webp')">
+        <div class="scene__image" role="img" aria-label="Раненый человек остался у дороги, двое путников уходят вдаль"></div>
+        <div class="scene__paper scene__paper--wide">
+          <p class="kicker">Сценка · Лк 10:30</p>
+          <h2>Человек на дороге</h2>
+          <p class="lead">Путник шёл из Иерусалима в Иерихон. Разбойники ограбили и избили его. Он остался ждать помощи.</p>
+
+          <div class="role-reveal">
+            <div>
+              <span class="section-label">Роли</span>
+              <strong id="currentRole">Кого позовём первым?</strong>
+            </div>
+            <button class="round-action" id="revealRole" type="button">Следующая роль</button>
+          </div>
+          <div class="role-list" id="roleList" aria-live="polite"></div>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Путешественник и разбойники · 3 минуты</h3>
+          <p>Выберите путешественника, двух разбойников, священника, левита и самарянина. Путешественник идёт с сумкой, разбойники забирают её и уходят. Пострадавший остаётся у дороги.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--split" data-title="Священник" data-default-seconds="240" aria-hidden="true" style="--scene-image: url('assets/scene-priest.webp')">
+        <div class="scene__image" role="img" aria-label="Священник проходит мимо человека, сидящего у дороги"></div>
+        <div class="scene__paper">
+          <p class="character-name">Священник</p>
+          <h2>Какую причину можно придумать, чтобы пройти мимо?</h2>
+          <form class="excuse-form" data-character="Священник">
+            <label for="priestExcuse">Ответ класса</label>
+            <div class="input-row">
+              <input id="priestExcuse" name="excuse" autocomplete="off" placeholder="Запишите ответ своими словами">
+              <button class="button button--primary" type="submit">Добавить</button>
+            </div>
+          </form>
+          <div class="mini-board" data-excuse-preview="Священник" aria-live="polite"></div>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Священник · 4 минуты</h3>
+          <p>Ученик видит пострадавшего и проходит мимо. Не подсказывайте ответ: важно, чтобы ребёнок сам придумал оправдание от лица героя.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--image-right" data-title="Левит" data-default-seconds="240" aria-hidden="true" style="--scene-image: url('assets/scene-levite.webp')">
+        <div class="scene__image" role="img" aria-label="Левит уходит по дороге, оставляя раненого человека"></div>
+        <div class="scene__paper">
+          <p class="character-name">Левит</p>
+          <h2>Как ты объяснишь, почему не остановился?</h2>
+          <form class="excuse-form" data-character="Левит">
+            <label for="leviteExcuse">Ответ класса</label>
+            <div class="input-row">
+              <input id="leviteExcuse" name="excuse" autocomplete="off" placeholder="Запишите ещё одну причину">
+              <button class="button button--primary" type="submit">Добавить</button>
+            </div>
+          </form>
+          <div class="mini-board" data-excuse-preview="Левит" aria-live="polite"></div>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Левит · 4 минуты</h3>
+          <p>Второй ученик тоже проходит мимо и придумывает своё объяснение. Дайте классу услышать, насколько убедительно может звучать оправдание.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--split" data-title="Самарянин" data-default-seconds="300" aria-hidden="true" style="--scene-image: url('assets/scene-samaritan.webp')">
+        <div class="scene__image" role="img" aria-label="Самарянин перевязывает руку раненому человеку у дороги"></div>
+        <div class="scene__paper">
+          <p class="character-name character-name--teal">Самарянин</p>
+          <h2>Ты тоже мог пройти мимо. Почему ты решил помочь?</h2>
+          <button class="button button--primary reveal-trigger" type="button" aria-expanded="false">Открыть поступок героя</button>
+          <div class="reveal-answer" hidden>
+            <p>Он увидел беду, подошёл к человеку и сделал всё, что мог: перевязал раны, довёз до гостиницы и оплатил дальнейший уход.</p>
+          </div>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Самарянин · 5 минут</h3>
+          <p>Ученик помогает пострадавшему подняться и ведёт его в гостиницу. После сценки спросите, почему он помог, хотя мог найти такое же оправдание.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--discussion" data-title="Что мешает помочь?" data-default-seconds="360" aria-hidden="true">
+        <div class="discussion-heading">
+          <p class="kicker">Обсуждение</p>
+          <h2>Что мешает помочь?</h2>
+          <p>Нажмите на ответ класса и спросите: «Что всё-таки можно было сделать?»</p>
+        </div>
+        <div class="excuse-board" id="excuseBoard">
+          <p class="empty-state">Здесь появятся объяснения священника и левита.</p>
+        </div>
+        <p class="discussion-followup" id="discussionFollowup" aria-live="polite">Мог ли самарянин найти себе такое же оправдание?</p>
+        <div class="scene__cue" hidden>
+          <h3>Обсуждение сценки · 6 минут</h3>
+          <p>Разберите придуманные объяснения. Обсудите, действительно ли они мешали помочь и бывает ли, что лень или эгоизм подсказывают нам удобную причину.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--journey" data-title="Путь помощи" data-default-seconds="240" aria-hidden="true" style="--scene-image: url('assets/scene-road.webp')">
+        <div class="journey-copy">
+          <p class="kicker">Соберите по порядку</p>
+          <h2>Путь помощи</h2>
+          <p>Выбирайте поступки самарянина один за другим.</p>
+        </div>
+        <div class="sequence-pool" id="sequencePool" aria-label="Поступки для выбора"></div>
+        <ol class="road-steps" id="roadSteps" aria-label="Последовательность поступков">
+          <li><span>1</span><strong>…</strong></li>
+          <li><span>2</span><strong>…</strong></li>
+          <li><span>3</span><strong>…</strong></li>
+          <li><span>4</span><strong>…</strong></li>
+          <li><span>5</span><strong>…</strong></li>
+        </ol>
+        <div class="sequence-result" id="sequenceResult" aria-live="polite">Первый шаг начинается с внимания.</div>
+        <button class="text-action" id="resetSequence" type="button">Собрать заново</button>
+        <button class="button button--coral sequence-review-button" id="sequenceReviewButton" type="button">Проверяем вместе</button>
+        <div class="scene__cue" hidden>
+          <h3>Что сделал самарянин · 4 минуты</h3>
+          <p>Попросите детей восстановить действия по порядку. После завершения спросите, что герой сделал сам и как позаботился о человеке после отъезда.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--choice" data-title="Кто оказался ближним?" data-default-seconds="240" aria-hidden="true">
+        <div class="choice-copy">
+          <p class="kicker">Лк 10:36–37</p>
+          <h2>Кто оказался ближним?</h2>
+          <p>Выберите героя и объясните ответ его поступками.</p>
+        </div>
+        <div class="people-choice" role="group" aria-label="Выберите героя">
+          <button type="button" data-person="priest"><span aria-hidden="true">I</span>Священник</button>
+          <button type="button" data-person="levite"><span aria-hidden="true">II</span>Левит</button>
+          <button type="button" data-person="samaritan"><span aria-hidden="true">III</span>Самарянин</button>
+        </div>
+        <div class="choice-feedback" id="choiceFeedback" aria-live="polite">По каким поступкам мы это понимаем?</div>
+        <blockquote hidden id="finalQuote">«Иди, и ты поступай так же» <cite>Лк 10:37</cite></blockquote>
+        <div class="scene__cue" hidden>
+          <h3>Кто оказался ближним · 4 минуты</h3>
+          <p>Сопоставьте начальный вопрос «Кто мой ближний?» с вопросом Христа о том, кто оказался ближним пострадавшему. Подведите к мысли: ближним становятся через милосердный поступок.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--scenario" data-title="Новенький на перемене" data-default-seconds="600" aria-hidden="true" style="--scene-image: url('assets/scene-newcomer.webp')" data-scenario="newcomer">
+        <div class="scene__image" role="img" aria-label="Ученик сидит один, пока другие дети разговаривают в школьном коридоре"></div>
+        <div class="scene__paper scenario-panel">
+          <p class="kicker">Школьная ситуация 1</p>
+          <h2>Новенький на перемене</h2>
+          <p class="lead">Он сидит один. Что можно ему сказать или предложить?</p>
+          <div class="scenario-switch" role="group" aria-label="Выберите направление обсуждения">
+            <button type="button" data-mode="excuse">Как пройти мимо?</button>
+            <button type="button" data-mode="help">Как помочь?</button>
+          </div>
+          <div class="scenario-response" hidden>
+            <strong></strong>
+            <p></p>
+          </div>
+          <button class="text-action start-minute" type="button">Запустить 1 минуту для пары</button>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Работа в парах · до 10 минут на три ситуации</h3>
+          <p>Пара сначала формулирует возможное оправдание, затем называет конкретный поступок помощи. Спросите, какое действие действительно изменит положение человека.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--scenario scene--image-right" data-title="Рассыпавшиеся книги" data-default-seconds="600" aria-hidden="true" style="--scene-image: url('assets/scene-books.webp')" data-scenario="books">
+        <div class="scene__image" role="img" aria-label="Ученик собирает упавшие книги, двое школьников стоят рядом"></div>
+        <div class="scene__paper scenario-panel">
+          <p class="kicker">Школьная ситуация 2</p>
+          <h2>Рассыпавшиеся книги</h2>
+          <p class="lead">Младший ученик уронил книги. Как подойти и предложить помощь?</p>
+          <div class="scenario-switch" role="group" aria-label="Выберите направление обсуждения">
+            <button type="button" data-mode="excuse">Как пройти мимо?</button>
+            <button type="button" data-mode="help">Как помочь?</button>
+          </div>
+          <div class="scenario-response" hidden>
+            <strong></strong>
+            <p></p>
+          </div>
+          <button class="text-action start-minute" type="button">Запустить 1 минуту для пары</button>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Обсуждение в парах</h3>
+          <p>Попросите сформулировать не общее «помочь», а конкретные слова и действие: подойти, спросить и собрать книги вместе.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--scenario" data-title="Не берут в игру" data-default-seconds="600" aria-hidden="true" style="--scene-image: url('assets/scene-game.webp')" data-scenario="game">
+        <div class="scene__image" role="img" aria-label="Группа школьников разговаривает на площадке, один ученик стоит в стороне"></div>
+        <div class="scene__paper scenario-panel">
+          <p class="kicker">Школьная ситуация 3</p>
+          <h2>Не берут в игру</h2>
+          <p class="lead">Одноклассник остался в стороне. Как помочь ему присоединиться, не начиная ссоры?</p>
+          <div class="scenario-switch" role="group" aria-label="Выберите направление обсуждения">
+            <button type="button" data-mode="excuse">Как пройти мимо?</button>
+            <button type="button" data-mode="help">Как помочь?</button>
+          </div>
+          <div class="scenario-response" hidden>
+            <strong></strong>
+            <p></p>
+          </div>
+          <button class="text-action start-minute" type="button">Запустить 1 минуту для пары</button>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Обсуждение в парах</h3>
+          <p>Ищите спокойный способ включить одноклассника в игру. Если ситуация опасна или человек серьёзно пострадал, помощь может состоять в том, чтобы позвать взрослого.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--commitment" data-title="Кому я могу помочь?" data-default-seconds="180" aria-hidden="true">
+        <div class="commitment-copy">
+          <p class="kicker">Личное решение</p>
+          <h2>На этой неделе<br>я могу помочь…</h2>
+          <p>Один посильный поступок. Поделиться решением можно по желанию.</p>
+        </div>
+        <form class="promise-form" id="promiseForm">
+          <label for="promiseInput">Моё решение</label>
+          <div class="input-row">
+            <input id="promiseInput" name="promise" autocomplete="off" maxlength="100" placeholder="Например: приглашу новенького играть вместе">
+            <button class="button button--coral" type="submit">Добавить на путь</button>
+          </div>
+        </form>
+        <div class="promise-road" id="promiseRoad" aria-live="polite">
+          <p>Каждый добрый поступок становится следующим шагом.</p>
+        </div>
+        <p class="closing-quote">«Иди, и ты поступай так же»</p>
+        <div class="scene__cue" hidden>
+          <h3>Завершение</h3>
+          <p>Предложите каждому закончить фразу про себя или добавить один посильный поступок на общий путь. Не требуйте публичного ответа.</p>
+        </div>
+      </section>
+
+      <section class="scene scene--closing" data-title="Итог урока" data-default-seconds="120" aria-hidden="true" style="--scene-image: url('assets/scene-road.webp')">
+        <div class="closing-summary">
+          <p class="kicker">Итог урока</p>
+          <h2>Ближним становятся</h2>
+          <p class="closing-summary__lead">Не вопрос «кто достоин моей помощи?», а решение: «чьим ближним могу стать я?»</p>
+          <div class="takeaway-path" aria-label="Три шага милосердия">
+            <div><span>1</span><strong>Увидеть</strong><p>заметить человека и его нужду</p></div>
+            <div><span>2</span><strong>Подойти</strong><p>не прятаться за удобным оправданием</p></div>
+            <div><span>3</span><strong>Помочь</strong><p>сделать конкретный посильный шаг</p></div>
+          </div>
+          <blockquote>«Иди, и ты поступай так же» <cite>Лк 10:37</cite></blockquote>
+          <p class="closing-summary__prompt">Назовите одним словом, что вы уносите с этого урока.</p>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Итог · 2 минуты</h3>
+          <p>Коротко повторите три шага милосердия. Предложите ученикам одним словом назвать главный вывод, затем нажмите «Завершить урок».</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="lesson-controls">
+      <button class="nav-button" id="previousButton" type="button" aria-label="Предыдущий этап">
+        <span aria-hidden="true">‹</span>
+        <span>Назад</span>
+      </button>
+      <button class="cue-button" id="cueButton" type="button" aria-expanded="false" aria-controls="teacherPanel">
+        <span aria-hidden="true">☼</span>
+        <span>Подсказка ведущему</span>
+      </button>
+      <div class="scene-counter" aria-label="Номер этапа"><strong id="sceneNumber">1</strong><span>/ <span id="sceneTotal">13</span></span></div>
+      <button class="nav-button nav-button--next" id="nextButton" type="button" aria-label="Следующий этап">
+        <span>Далее</span>
+        <span aria-hidden="true">›</span>
+      </button>
+      <p class="lesson-credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
+    </footer>
+
+    <aside class="teacher-panel" id="teacherPanel" hidden aria-label="Подсказка ведущему">
+      <button class="teacher-panel__close" id="closeTeacherPanel" type="button" aria-label="Закрыть подсказку">×</button>
+      <div id="teacherPanelContent"></div>
+      <p class="teacher-panel__keys"><kbd>←</kbd> <kbd>→</kbd> переход · <kbd>F</kbd> полный экран</p>
+    </aside>
+
+    <aside class="classroom-panel" id="classroomPanel" hidden aria-label="Пульт класса">
+      <header class="classroom-panel__header">
+        <div>
+          <span class="section-label">Пульт учителя</span>
+          <h2>Класс <strong id="classroomCode">—</strong></h2>
+        </div>
+        <button class="teacher-panel__close" id="closeClassroomPanel" type="button" aria-label="Закрыть пульт">×</button>
+      </header>
+      <div class="classroom-share">
+        <p>Ученики открывают ссылку или вводят код:</p>
+        <div class="classroom-join-visual">
+          <div class="qr-code" id="studentQrCode" aria-label="QR-код ссылки для учеников"></div>
+          <div>
+            <strong id="classroomCodeLarge">—</strong>
+            <span>код класса</span>
+            <button class="button button--coral" id="projectQrButton" type="button">Показать QR на доске</button>
+          </div>
+        </div>
+        <div class="input-row">
+          <input id="studentLink" readonly aria-label="Ссылка для учеников">
+          <button class="button button--primary" id="copyStudentLink" type="button">Копировать</button>
+        </div>
+        <a class="button button--primary classroom-popout" id="openControlPage" href="control.html" target="_blank" rel="noopener">Открыть пульт в отдельной вкладке ↗</a>
+      </div>
+      <div class="classroom-stats">
+        <div><strong id="studentCount">0</strong><span>в классе</span></div>
+        <div><strong id="answerCount">0</strong><span>ответов</span></div>
+        <div><strong id="kindnessTotal">0</strong><span>лучей добра</span></div>
+      </div>
+      <form class="broadcast-form" id="broadcastForm">
+        <label for="broadcastInput">Сообщение на все экраны</label>
+        <div class="input-row">
+          <input id="broadcastInput" maxlength="120" autocomplete="off" placeholder="Например: обсуждаем в парах">
+          <button class="button button--primary" type="submit">Показать</button>
+        </div>
+      </form>
+      <div class="classroom-actions">
+        <button class="button button--coral" id="celebrateButton" type="button">Запустить «Волну добра»</button>
+        <button class="button button--quiet" id="clearResponsesButton" type="button">Очистить ответы</button>
+      </div>
+      <div class="response-section">
+        <div class="response-section__heading">
+          <h3>Живые ответы</h3>
+          <span id="responseSceneLabel">Текущий этап</span>
+        </div>
+        <div class="response-feed" id="responseFeed" aria-live="polite">
+          <p class="empty-state">Ответы учеников появятся здесь.</p>
+        </div>
+      </div>
+    </aside>
+
+    <section class="student-dock" id="studentDock" hidden aria-label="Задание ученика">
+      <div class="student-dock__status">
+        <span id="studentNameLabel">Ученик</span>
+        <strong><span aria-hidden="true">✦</span> <span id="studentScore">0</span></strong>
+      </div>
+      <div class="student-activity" id="studentActivity" aria-live="polite"></div>
+      <p class="student-credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
+    </section>
+    <p class="student-page-credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
+
+    <section class="moderation-tray" id="moderationTray" aria-label="Ответы на проверке" hidden></section>
+    <div class="private-reply" id="privateReply" role="status" aria-live="polite" hidden>
+      <div><strong>Ответ учителя</strong><p id="privateReplyText"></p></div>
+      <button id="closePrivateReply" type="button" aria-label="Закрыть сообщение">×</button>
+    </div>
+
+    <div class="teacher-message" id="teacherMessage" role="status" aria-live="polite" hidden></div>
+    <div class="kindness-wave" id="kindnessWave" aria-live="assertive" hidden>
+      <span aria-hidden="true">✦</span>
+      <strong>Волна добра!</strong>
+      <p>Каждый добрый поступок делает класс светлее.</p>
+    </div>
+
+    <div class="qr-projection" id="qrProjection" role="dialog" aria-modal="true" aria-labelledby="qrProjectionTitle" hidden>
+      <button class="qr-projection__close" id="closeQrProjection" type="button" aria-label="Закрыть QR-код">×</button>
+      <p class="kicker">Подключение учеников</p>
+      <h2 id="qrProjectionTitle">Наведите камеру телефона</h2>
+      <div class="qr-projection__code" id="projectedQrCode" aria-label="Большой QR-код для подключения"></div>
+      <p class="qr-projection__fallback">Или введите код <strong id="projectedRoomCode">—</strong></p>
+      <p class="qr-projection__url" id="projectedStudentUrl"></p>
+      <p class="qr-projection__count"><strong id="projectedStudentCount">0</strong> уже подключились</p>
+    </div>
+
+    <div class="lesson-complete" id="lessonComplete" role="dialog" aria-modal="true" aria-labelledby="lessonCompleteTitle" hidden>
+      <div class="lesson-complete__light" aria-hidden="true">✦</div>
+      <p class="kicker">Урок завершён</p>
+      <h2 id="lessonCompleteTitle">Милосердие начинается<br>с первого шага</h2>
+      <p>Спасибо за честные ответы, внимание друг к другу и готовность помочь.</p>
+      <blockquote>«Иди, и ты поступай так же» <cite>Лк 10:37</cite></blockquote>
+      <button class="button button--light" id="restartLesson" type="button">Вернуться к началу</button>
+      <p class="mode-gate__credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  </div>
+  <script src="app.js"></script>
+  <script src="qrcode.min.js"></script>
+  <script src="classroom.js"></script>
+</body>
+</html>

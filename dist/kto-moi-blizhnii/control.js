@@ -240,7 +240,7 @@
 
   const joinUrl = new URL('student.html', window.location.href);
   joinUrl.searchParams.set('room', room);
-  const lessonUrl = new URL('./', window.location.href);
+  const lessonUrl = new URL('lesson.html', window.location.href);
   lessonUrl.searchParams.set('mode', 'teacher');
   lessonUrl.searchParams.set('room', room);
   roomCode.textContent = room;

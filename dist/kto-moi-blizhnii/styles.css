@@ -652,6 +652,12 @@ button {
   text-decoration: line-through;
 }
 
+[data-excuse-preview] .is-crossed {
+  color: #724332;
+  background: #f4cdbd;
+  text-decoration: line-through;
+}
+
 .empty-state {
   align-self: center;
   color: var(--ink-soft);
@@ -2089,6 +2095,8 @@ body.mode-student #restartLesson {
 
 body.mode-student .sequence-review-button,
 body.mode-student .start-minute,
+body.mode-student .round-action,
+body.mode-student .reveal-trigger,
 body.mode-student [data-next] {
   display: none;
 }
