@@ -189,6 +189,22 @@ async function handleSync(request, response, url) {
       score: room.students[studentId].score,
       createdAt: Date.now()
     };
+    const singleChoiceTypes = new Set(['ready', 'role', 'motive', 'barrier', 'neighbor', 'sequence_order']);
+    const existingChoiceIndex = singleChoiceTypes.has(responseItem.type)
+      ? room.responses.findIndex((item) => item.studentId === responseItem.studentId
+        && item.scene === responseItem.scene
+        && item.type === responseItem.type)
+      : -1;
+    if (existingChoiceIndex >= 0) {
+      const existing = room.responses[existingChoiceIndex];
+      const unchanged = existing.value.toLocaleLowerCase('ru') === responseItem.value.toLocaleLowerCase('ru')
+        && existing.text.toLocaleLowerCase('ru') === responseItem.text.toLocaleLowerCase('ru');
+      if (unchanged) return sendJson(response, 200, publicRoom(room));
+      room.responses[existingChoiceIndex] = { ...responseItem, id: existing.id };
+      room.revision += 1;
+      room.updatedAt = Date.now();
+      return sendJson(response, 200, publicRoom(room));
+    }
     const duplicate = room.responses.find((item) => item.studentId === responseItem.studentId
       && item.scene === responseItem.scene
       && item.type === responseItem.type

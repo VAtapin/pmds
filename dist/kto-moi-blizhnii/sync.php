@@ -290,6 +290,26 @@ $updated = mutate_room($code, static function (array $current) use ($body, $acti
             'score' => $score,
             'createdAt' => (int) floor(microtime(true) * 1000),
         ];
+        $singleChoiceTypes = ['ready', 'role', 'motive', 'barrier', 'neighbor', 'sequence_order'];
+        if (in_array($responseItem['type'], $singleChoiceTypes, true)) {
+            foreach ($current['responses'] ?? [] as $index => $existing) {
+                if (($existing['studentId'] ?? '') !== $responseItem['studentId']
+                    || (int) ($existing['scene'] ?? -1) !== $responseItem['scene']
+                    || ($existing['type'] ?? '') !== $responseItem['type']) {
+                    continue;
+                }
+                $unchanged = mb_strtolower((string) ($existing['value'] ?? '')) === mb_strtolower($responseItem['value'])
+                    && mb_strtolower((string) ($existing['text'] ?? '')) === mb_strtolower($responseItem['text']);
+                if ($unchanged) {
+                    return $current;
+                }
+                $responseItem['id'] = $existing['id'] ?? $responseItem['id'];
+                $current['responses'][$index] = $responseItem;
+                $current['revision'] += 1;
+                $current['updatedAt'] = (int) floor(microtime(true) * 1000);
+                return $current;
+            }
+        }
         $duplicate = false;
         foreach ($current['responses'] ?? [] as $existing) {
             if (($existing['studentId'] ?? '') === $responseItem['studentId']

@@ -275,7 +275,7 @@
     target.append(wall);
   }
 
-  function renderPollTotals(totals = {}) {
+  function renderPollTotals(totals = {}, responses = []) {
     const scene = window.lessonApp.getCurrentScene();
     const activity = activities[scene];
     if (!activity?.options?.length) {
@@ -283,13 +283,24 @@
       document.querySelectorAll('.live-class-poll').forEach((poll) => poll.remove());
       return;
     }
-    const results = activity.options.map(([label, value]) => ({
-      label,
-      value,
-      count: Number(totals[`${scene}:${activity.type}:${value}`] || 0)
-    }));
+    const showNames = mode === 'teacher' && activity.type === 'role';
+    const results = activity.options.map(([label, value]) => {
+      const names = showNames
+        ? Array.from(new Set(responses
+          .filter((item) => item.scene === scene && item.type === activity.type && item.value === value)
+          .map((item) => item.name)
+          .filter(Boolean)))
+          .sort((left, right) => left.localeCompare(right, 'ru'))
+        : [];
+      return {
+        label,
+        value,
+        names,
+        count: Number(totals[`${scene}:${activity.type}:${value}`] || 0)
+      };
+    });
     const total = results.reduce((sum, item) => sum + item.count, 0);
-    const signature = JSON.stringify([scene, results.map((item) => [item.value, item.count])]);
+    const signature = JSON.stringify([scene, results.map((item) => [item.value, item.count, item.names])]);
     const activeScene = document.querySelectorAll('.scene')[scene];
     const activePoll = activeScene?.querySelector('.live-class-poll');
     if (signature === pollTotalsSignature && (total === 0 || activePoll)) return;
@@ -315,6 +326,17 @@
       const meter = document.createElement('i');
       meter.style.setProperty('--poll-width', `${Math.round((item.count / total) * 100)}%`);
       option.append(copy, count, meter);
+      if (item.names.length) {
+        const names = document.createElement('div');
+        names.className = 'live-class-poll__names';
+        item.names.forEach((studentName) => {
+          const name = document.createElement('small');
+          name.className = 'live-class-poll__name';
+          name.textContent = studentName;
+          names.append(name);
+        });
+        option.append(names);
+      }
       options.append(option);
     });
     poll.append(options);
@@ -337,7 +359,7 @@
     const currentResponses = responses.filter((item) => item.scene === currentScene).slice(0, 30);
     responseSceneLabel.textContent = `Этап ${currentScene + 1}`;
     renderSharedPosts(posts);
-    renderPollTotals(data.totals || {});
+    renderPollTotals(data.totals || {}, responses);
     renderModerationBubbles(posts);
     responseFeed.replaceChildren();
 

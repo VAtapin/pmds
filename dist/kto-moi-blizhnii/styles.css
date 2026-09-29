@@ -1889,6 +1889,26 @@ button {
   z-index: 1;
 }
 
+.live-class-poll__names {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding-top: 0.1rem;
+}
+
+.live-class-poll__name {
+  padding: 0.18rem 0.42rem;
+  color: #fff9eb;
+  background: var(--teal);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
 .live-class-poll__option i {
   position: absolute;
   inset: auto auto 0 0;
