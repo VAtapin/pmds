@@ -178,55 +178,83 @@
     }
   }
 
+  function createModerationBubble(post, signature) {
+    const bubble = document.createElement('article');
+    bubble.className = 'moderation-bubble';
+    bubble.dataset.postId = post.id;
+    bubble.dataset.signature = signature;
+    const avatar = document.createElement('span');
+    avatar.className = 'moderation-bubble__avatar';
+    avatar.textContent = post.name.slice(0, 1).toUpperCase();
+    const copy = document.createElement('div');
+    copy.className = 'moderation-bubble__copy';
+    const name = document.createElement('strong');
+    name.textContent = post.name;
+    const caption = document.createElement('small');
+    caption.textContent = `${responseLabel(post)} · этап ${post.scene + 1}`;
+    const text = document.createElement('p');
+    text.textContent = post.text;
+    copy.append(name, caption, text);
+    const actions = document.createElement('div');
+    actions.className = 'moderation-bubble__actions';
+    const approve = document.createElement('button');
+    approve.type = 'button';
+    approve.className = 'moderation-approve';
+    approve.textContent = '✓ Показать всем';
+    approve.addEventListener('click', () => moderatePost(post, 'approve'));
+    const reject = document.createElement('button');
+    reject.type = 'button';
+    reject.className = 'moderation-reject';
+    reject.textContent = '× Отклонить';
+    reject.addEventListener('click', () => moderatePost(post, 'delete'));
+    const reply = document.createElement('button');
+    reply.type = 'button';
+    reply.className = 'moderation-reply';
+    reply.textContent = '↩ Ответить ученику';
+    reply.addEventListener('click', () => moderatePost(post, 'reply'));
+    actions.append(approve, reject, reply);
+    bubble.append(avatar, copy, actions);
+    return bubble;
+  }
+
   function renderModerationBubbles(posts = []) {
-    const pending = posts.filter((post) => post.status === 'pending').slice(-5).reverse();
-    const signature = JSON.stringify(pending.map((post) => [post.id, post.name, post.text]));
+    const pending = posts.filter((post) => post.status === 'pending');
+    const signature = JSON.stringify(pending.map((post) => [post.id, post.name, post.text, post.type, post.scene]));
     if (signature === moderationSignature) return;
     moderationSignature = signature;
-    moderationTray.replaceChildren();
     moderationTray.hidden = pending.length === 0;
-    pending.slice(0, 4).forEach((post) => {
-      const bubble = document.createElement('article');
-      bubble.className = 'moderation-bubble';
-      const avatar = document.createElement('span');
-      avatar.className = 'moderation-bubble__avatar';
-      avatar.textContent = post.name.slice(0, 1).toUpperCase();
-      const copy = document.createElement('div');
-      copy.className = 'moderation-bubble__copy';
-      const name = document.createElement('strong');
-      name.textContent = post.name;
-      const caption = document.createElement('small');
-      caption.textContent = `${responseLabel(post)} · этап ${post.scene + 1}`;
-      const text = document.createElement('p');
-      text.textContent = post.text;
-      copy.append(name, caption, text);
-      const actions = document.createElement('div');
-      actions.className = 'moderation-bubble__actions';
-      const approve = document.createElement('button');
-      approve.type = 'button';
-      approve.className = 'moderation-approve';
-      approve.textContent = '✓ Показать всем';
-      approve.addEventListener('click', () => moderatePost(post, 'approve'));
-      const reject = document.createElement('button');
-      reject.type = 'button';
-      reject.className = 'moderation-reject';
-      reject.textContent = '× Отклонить';
-      reject.addEventListener('click', () => moderatePost(post, 'delete'));
-      const reply = document.createElement('button');
-      reply.type = 'button';
-      reply.className = 'moderation-reply';
-      reply.textContent = '↩ Ответить ученику';
-      reply.addEventListener('click', () => moderatePost(post, 'reply'));
-      actions.append(approve, reject, reply);
-      bubble.append(avatar, copy, actions);
-      moderationTray.append(bubble);
+
+    const existing = new Map(Array.from(moderationTray.querySelectorAll('.moderation-bubble'))
+      .map((bubble) => [bubble.dataset.postId, bubble]));
+    const keep = new Set();
+    let anchor = moderationTray.firstElementChild;
+
+    pending.slice(0, 1).forEach((post) => {
+      const postSignature = JSON.stringify([post.name, post.text, post.type, post.scene]);
+      let bubble = existing.get(post.id);
+      if (!bubble || bubble.dataset.signature !== postSignature) {
+        const replacement = createModerationBubble(post, postSignature);
+        if (bubble) bubble.replaceWith(replacement);
+        bubble = replacement;
+      }
+      keep.add(bubble);
+      if (bubble !== anchor) moderationTray.insertBefore(bubble, anchor);
+      anchor = bubble.nextElementSibling;
     });
-    if (pending.length > 4) {
-      const more = document.createElement('span');
-      more.className = 'moderation-more';
-      more.textContent = `Ещё ответов: ${pending.length - 4}`;
+
+    moderationTray.querySelectorAll('.moderation-bubble').forEach((bubble) => {
+      if (!keep.has(bubble)) bubble.remove();
+    });
+
+    let more = moderationTray.querySelector('.moderation-more');
+    if (pending.length > 1) {
+      if (!more) {
+        more = document.createElement('span');
+        more.className = 'moderation-more';
+      }
+      more.textContent = `Ещё ответов: ${pending.length - 1}`;
       moderationTray.append(more);
-    }
+    } else if (more) more.remove();
   }
 
   function renderSharedPosts(posts = []) {

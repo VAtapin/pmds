@@ -1654,7 +1654,9 @@ button {
   gap: 0.55rem;
   width: min(26rem, calc(100vw - 2rem));
   max-height: calc(100dvh - var(--topbar-height) - var(--controls-height) - 2rem);
-  overflow-y: auto;
+  overflow: visible;
+  overflow-anchor: none;
+  scrollbar-gutter: stable;
   pointer-events: none;
 }
 
@@ -1674,18 +1676,6 @@ button {
   border-radius: 1rem 1rem 1rem 0.25rem;
   box-shadow: 0 16px 40px rgba(16, 45, 43, 0.24);
   pointer-events: auto;
-  animation: bubble-in 280ms ease both;
-}
-
-.moderation-bubble::after {
-  position: absolute;
-  left: 1rem;
-  bottom: -0.45rem;
-  width: 0.9rem;
-  height: 0.9rem;
-  background: #fffaf0;
-  content: "";
-  transform: rotate(45deg);
 }
 
 .moderation-bubble__avatar {
@@ -1747,7 +1737,10 @@ button {
 }
 
 .moderation-more {
-  justify-self: start;
+  position: absolute;
+  z-index: 2;
+  top: -0.7rem;
+  right: 0.7rem;
   padding: 0.45rem 0.7rem;
   color: white;
   background: rgba(16, 45, 43, 0.92);
