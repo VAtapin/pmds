@@ -23,6 +23,15 @@
       </div>
 
       <div class="topbar__tools">
+        <div class="room-indicator" id="roomIndicator" hidden>
+          <span id="roomModeLabel">Класс</span>
+          <strong id="roomIndicatorCode">—</strong>
+        </div>
+        <button class="tool-button classroom-button" id="classroomButton" type="button" aria-expanded="false" aria-controls="classroomPanel" hidden>
+          <span aria-hidden="true">♧</span>
+          <span>Класс</span>
+          <strong id="connectedBadge">0</strong>
+        </button>
         <button class="tool-button timer-button" id="timerButton" type="button" aria-expanded="false" aria-controls="timerPanel">
           <span aria-hidden="true">◷</span>
           <span id="timerDisplay">05:00</span>
@@ -179,6 +188,7 @@
         </ol>
         <div class="sequence-result" id="sequenceResult" aria-live="polite">Первый шаг начинается с внимания.</div>
         <button class="text-action" id="resetSequence" type="button">Собрать заново</button>
+        <button class="button button--coral sequence-review-button" id="sequenceReviewButton" type="button">Проверяем вместе</button>
         <div class="scene__cue" hidden>
           <h3>Что сделал самарянин · 4 минуты</h3>
           <p>Попросите детей восстановить действия по порядку. После завершения спросите, что герой сделал сам и как позаботился о человеке после отъезда.</p>
@@ -292,6 +302,25 @@
           <p>Предложите каждому закончить фразу про себя или добавить один посильный поступок на общий путь. Не требуйте публичного ответа.</p>
         </div>
       </section>
+
+      <section class="scene scene--closing" data-title="Итог урока" data-default-seconds="120" aria-hidden="true" style="--scene-image: url('assets/scene-road.webp')">
+        <div class="closing-summary">
+          <p class="kicker">Итог урока</p>
+          <h2>Ближним становятся</h2>
+          <p class="closing-summary__lead">Не вопрос «кто достоин моей помощи?», а решение: «чьим ближним могу стать я?»</p>
+          <div class="takeaway-path" aria-label="Три шага милосердия">
+            <div><span>1</span><strong>Увидеть</strong><p>заметить человека и его нужду</p></div>
+            <div><span>2</span><strong>Подойти</strong><p>не прятаться за удобным оправданием</p></div>
+            <div><span>3</span><strong>Помочь</strong><p>сделать конкретный посильный шаг</p></div>
+          </div>
+          <blockquote>«Иди, и ты поступай так же» <cite>Лк 10:37</cite></blockquote>
+          <p class="closing-summary__prompt">Назовите одним словом, что вы уносите с этого урока.</p>
+        </div>
+        <div class="scene__cue" hidden>
+          <h3>Итог · 2 минуты</h3>
+          <p>Коротко повторите три шага милосердия. Предложите ученикам одним словом назвать главный вывод, затем нажмите «Завершить урок».</p>
+        </div>
+      </section>
     </main>
 
     <footer class="lesson-controls">
@@ -303,11 +332,12 @@
         <span aria-hidden="true">☼</span>
         <span>Подсказка ведущему</span>
       </button>
-      <div class="scene-counter" aria-label="Номер этапа"><strong id="sceneNumber">1</strong><span>/ 12</span></div>
+      <div class="scene-counter" aria-label="Номер этапа"><strong id="sceneNumber">1</strong><span>/ <span id="sceneTotal">13</span></span></div>
       <button class="nav-button nav-button--next" id="nextButton" type="button" aria-label="Следующий этап">
         <span>Далее</span>
         <span aria-hidden="true">›</span>
       </button>
+      <p class="lesson-credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
     </footer>
 
     <aside class="teacher-panel" id="teacherPanel" hidden aria-label="Подсказка ведущему">
@@ -316,8 +346,104 @@
       <p class="teacher-panel__keys"><kbd>←</kbd> <kbd>→</kbd> переход · <kbd>F</kbd> полный экран</p>
     </aside>
 
+    <aside class="classroom-panel" id="classroomPanel" hidden aria-label="Пульт класса">
+      <header class="classroom-panel__header">
+        <div>
+          <span class="section-label">Пульт учителя</span>
+          <h2>Класс <strong id="classroomCode">—</strong></h2>
+        </div>
+        <button class="teacher-panel__close" id="closeClassroomPanel" type="button" aria-label="Закрыть пульт">×</button>
+      </header>
+      <div class="classroom-share">
+        <p>Ученики открывают ссылку или вводят код:</p>
+        <div class="classroom-join-visual">
+          <div class="qr-code" id="studentQrCode" aria-label="QR-код ссылки для учеников"></div>
+          <div>
+            <strong id="classroomCodeLarge">—</strong>
+            <span>код класса</span>
+            <button class="button button--coral" id="projectQrButton" type="button">Показать QR на доске</button>
+          </div>
+        </div>
+        <div class="input-row">
+          <input id="studentLink" readonly aria-label="Ссылка для учеников">
+          <button class="button button--primary" id="copyStudentLink" type="button">Копировать</button>
+        </div>
+        <a class="button button--primary classroom-popout" id="openControlPage" href="control.html" target="_blank" rel="noopener">Открыть пульт в отдельной вкладке ↗</a>
+      </div>
+      <div class="classroom-stats">
+        <div><strong id="studentCount">0</strong><span>в классе</span></div>
+        <div><strong id="answerCount">0</strong><span>ответов</span></div>
+        <div><strong id="kindnessTotal">0</strong><span>лучей добра</span></div>
+      </div>
+      <form class="broadcast-form" id="broadcastForm">
+        <label for="broadcastInput">Сообщение на все экраны</label>
+        <div class="input-row">
+          <input id="broadcastInput" maxlength="120" autocomplete="off" placeholder="Например: обсуждаем в парах">
+          <button class="button button--primary" type="submit">Показать</button>
+        </div>
+      </form>
+      <div class="classroom-actions">
+        <button class="button button--coral" id="celebrateButton" type="button">Запустить «Волну добра»</button>
+        <button class="button button--quiet" id="clearResponsesButton" type="button">Очистить ответы</button>
+      </div>
+      <div class="response-section">
+        <div class="response-section__heading">
+          <h3>Живые ответы</h3>
+          <span id="responseSceneLabel">Текущий этап</span>
+        </div>
+        <div class="response-feed" id="responseFeed" aria-live="polite">
+          <p class="empty-state">Ответы учеников появятся здесь.</p>
+        </div>
+      </div>
+    </aside>
+
+    <section class="student-dock" id="studentDock" hidden aria-label="Задание ученика">
+      <div class="student-dock__status">
+        <span id="studentNameLabel">Ученик</span>
+        <strong><span aria-hidden="true">✦</span> <span id="studentScore">0</span></strong>
+      </div>
+      <div class="student-activity" id="studentActivity" aria-live="polite"></div>
+      <p class="student-credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
+    </section>
+    <p class="student-page-credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
+
+    <section class="moderation-tray" id="moderationTray" aria-label="Ответы на проверке" hidden></section>
+    <div class="private-reply" id="privateReply" role="status" aria-live="polite" hidden>
+      <div><strong>Ответ учителя</strong><p id="privateReplyText"></p></div>
+      <button id="closePrivateReply" type="button" aria-label="Закрыть сообщение">×</button>
+    </div>
+
+    <div class="teacher-message" id="teacherMessage" role="status" aria-live="polite" hidden></div>
+    <div class="kindness-wave" id="kindnessWave" aria-live="assertive" hidden>
+      <span aria-hidden="true">✦</span>
+      <strong>Волна добра!</strong>
+      <p>Каждый добрый поступок делает класс светлее.</p>
+    </div>
+
+    <div class="qr-projection" id="qrProjection" role="dialog" aria-modal="true" aria-labelledby="qrProjectionTitle" hidden>
+      <button class="qr-projection__close" id="closeQrProjection" type="button" aria-label="Закрыть QR-код">×</button>
+      <p class="kicker">Подключение учеников</p>
+      <h2 id="qrProjectionTitle">Наведите камеру телефона</h2>
+      <div class="qr-projection__code" id="projectedQrCode" aria-label="Большой QR-код для подключения"></div>
+      <p class="qr-projection__fallback">Или введите код <strong id="projectedRoomCode">—</strong></p>
+      <p class="qr-projection__url" id="projectedStudentUrl"></p>
+      <p class="qr-projection__count"><strong id="projectedStudentCount">0</strong> уже подключились</p>
+    </div>
+
+    <div class="lesson-complete" id="lessonComplete" role="dialog" aria-modal="true" aria-labelledby="lessonCompleteTitle" hidden>
+      <div class="lesson-complete__light" aria-hidden="true">✦</div>
+      <p class="kicker">Урок завершён</p>
+      <h2 id="lessonCompleteTitle">Милосердие начинается<br>с первого шага</h2>
+      <p>Спасибо за честные ответы, внимание друг к другу и готовность помочь.</p>
+      <blockquote>«Иди, и ты поступай так же» <cite>Лк 10:37</cite></blockquote>
+      <button class="button button--light" id="restartLesson" type="button">Вернуться к началу</button>
+      <p class="mode-gate__credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   </div>
   <script src="app.js"></script>
+  <script src="qrcode.min.js"></script>
+  <script src="classroom.js"></script>
 </body>
 </html>

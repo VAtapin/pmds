@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#193b3a">
+  <title>Вход для ученика — Кто мой ближний?</title>
+  <link rel="stylesheet" href="entry.css">
+</head>
+<body>
+  <main class="entry-card">
+    <div class="role-mark" aria-hidden="true">✦</div>
+    <p class="kicker">Версия для ученика</p>
+    <h1>Войти<br>в класс</h1>
+    <p class="lead">Введите имя и код с доски. Если вы открыли страницу по QR‑коду, код уже заполнен.</p>
+    <form class="entry-form" id="studentEntry">
+      <label for="room">Код класса</label>
+      <input id="room" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="Например: 7KPM4A" required>
+      <label for="name">Ваше имя</label>
+      <input id="name" maxlength="32" autocomplete="name" placeholder="Как к вам обращаться" required>
+      <p class="entry-error" id="entryError" role="alert" hidden></p>
+      <button class="entry-button" type="submit">Присоединиться к уроку</button>
+    </form>
+    <p class="entry-credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
+  </main>
+  <script>
+    'use strict';
+    const params = new URLSearchParams(window.location.search);
+    const roomInput = document.querySelector('#room');
+    const nameInput = document.querySelector('#name');
+    const error = document.querySelector('#entryError');
+    roomInput.value = (params.get('room') || '').toUpperCase().replace(/[^2-9A-HJ-NP-Z]/g, '').slice(0, 8);
+    nameInput.value = sessionStorage.getItem('neighborStudentName') || '';
+    if (params.get('error') === '1') {
+      error.textContent = 'Класс не найден или урок уже завершён. Проверьте код на доске.';
+      error.hidden = false;
+    }
+    document.querySelector('#studentEntry').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const room = roomInput.value.trim().toUpperCase();
+      const name = nameInput.value.trim();
+      if (room.length < 4 || !name) {
+        error.textContent = 'Проверьте код класса и имя.';
+        error.hidden = false;
+        return;
+      }
+      sessionStorage.setItem('neighborStudentName', name.slice(0, 32));
+      window.location.href = `./?mode=student&room=${encodeURIComponent(room)}`;
+    });
+  </script>
+</body>
+</html>

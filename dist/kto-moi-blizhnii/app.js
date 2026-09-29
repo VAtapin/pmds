@@ -12,9 +12,14 @@ const teacherPanelContent = document.querySelector('#teacherPanelContent');
 const closeTeacherPanel = document.querySelector('#closeTeacherPanel');
 const lessonStage = document.querySelector('#lessonStage');
 const toast = document.querySelector('#toast');
+const sceneTotal = document.querySelector('#sceneTotal');
+const lessonComplete = document.querySelector('#lessonComplete');
+const restartLesson = document.querySelector('#restartLesson');
 
 let currentScene = 0;
 let toastTimeout;
+let applyingSharedState = false;
+sceneTotal.textContent = String(scenes.length);
 
 function showToast(message) {
   window.clearTimeout(toastTimeout);
@@ -30,7 +35,8 @@ function closeTeacherCue() {
   cueButton.setAttribute('aria-expanded', 'false');
 }
 
-function setScene(index) {
+function setScene(index, options = {}) {
+  const { resetTimer = true } = options;
   const nextIndex = Math.max(0, Math.min(index, scenes.length - 1));
   currentScene = nextIndex;
 
@@ -45,19 +51,39 @@ function setScene(index) {
   sceneNumber.textContent = String(currentScene + 1);
   progressBar.style.width = `${((currentScene + 1) / scenes.length) * 100}%`;
   previousButton.disabled = currentScene === 0;
-  nextButton.disabled = currentScene === scenes.length - 1;
-  nextButton.querySelector('span:first-child').textContent = currentScene === scenes.length - 2 ? 'К итогу' : 'Далее';
+  nextButton.disabled = false;
+  nextButton.querySelector('span:first-child').textContent = currentScene === scenes.length - 1
+    ? 'Завершить урок'
+    : currentScene === scenes.length - 2 ? 'К итогу' : 'Далее';
   lessonStage.scrollTop = 0;
   scene.scrollTop = 0;
   closeTeacherCue();
 
-  const defaultSeconds = Number(scene.dataset.defaultSeconds || 60);
-  setTimer(defaultSeconds, false);
+  if (resetTimer) {
+    const defaultSeconds = Number(scene.dataset.defaultSeconds || 60);
+    setTimer(defaultSeconds, false);
+  }
   window.history.replaceState(null, '', `#${currentScene + 1}`);
+  if (!applyingSharedState) signalStateChange();
+}
+
+function finishLesson() {
+  lessonComplete.hidden = false;
+  closeTeacherCue();
+  window.dispatchEvent(new CustomEvent('lesson:finished'));
+}
+
+function reopenLesson() {
+  lessonComplete.hidden = true;
+  setScene(0);
 }
 
 previousButton.addEventListener('click', () => setScene(currentScene - 1));
-nextButton.addEventListener('click', () => setScene(currentScene + 1));
+nextButton.addEventListener('click', () => {
+  if (currentScene === scenes.length - 1) finishLesson();
+  else setScene(currentScene + 1);
+});
+restartLesson.addEventListener('click', reopenLesson);
 document.querySelectorAll('[data-next]').forEach((button) => {
   button.addEventListener('click', () => setScene(currentScene + 1));
 });
@@ -81,7 +107,8 @@ document.addEventListener('keydown', (event) => {
 
   if (event.key === 'ArrowRight' || event.key === 'PageDown') {
     event.preventDefault();
-    setScene(currentScene + 1);
+    if (currentScene === scenes.length - 1) finishLesson();
+    else setScene(currentScene + 1);
   }
   if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
     event.preventDefault();
@@ -132,6 +159,7 @@ const timerReset = document.querySelector('#timerReset');
 let timerSeconds = 300;
 let timerInitial = 300;
 let timerInterval = null;
+let timerDeadline = 0;
 
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -147,6 +175,7 @@ function paintTimer() {
 function stopTimer() {
   window.clearInterval(timerInterval);
   timerInterval = null;
+  timerDeadline = 0;
   timerToggle.textContent = timerSeconds === 0 ? 'Сначала' : 'Старт';
   timerButton.classList.remove('is-ending');
 }
@@ -177,16 +206,17 @@ function playTimerTone() {
   }
 }
 
-function startTimer() {
-  if (timerInterval) {
+function startTimer(forcedDeadline = 0) {
+  if (timerInterval && !forcedDeadline) {
     stopTimer();
     timerToggle.textContent = 'Продолжить';
     return;
   }
   if (timerSeconds === 0) timerSeconds = timerInitial;
+  timerDeadline = forcedDeadline || Date.now() + timerSeconds * 1000;
   timerToggle.textContent = 'Пауза';
   timerInterval = window.setInterval(() => {
-    timerSeconds -= 1;
+    timerSeconds = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
     paintTimer();
     if (timerSeconds <= 0) {
       stopTimer();
@@ -287,10 +317,18 @@ function renderExcuses() {
 document.querySelectorAll('.excuse-form').forEach((form) => {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
+    if (document.body.classList.contains('mode-student')) return;
     const input = form.elements.excuse;
     const text = input.value.trim();
     if (!text) {
       input.focus();
+      return;
+    }
+    const duplicate = excuses.some((item) => item.character === form.dataset.character
+      && item.text.toLocaleLowerCase('ru') === text.toLocaleLowerCase('ru'));
+    if (duplicate) {
+      input.value = '';
+      showToast('Такой ответ уже есть на доске');
       return;
     }
     excuses.push({ character: form.dataset.character, text });
@@ -322,7 +360,9 @@ const sequencePool = document.querySelector('#sequencePool');
 const roadStepElements = Array.from(document.querySelectorAll('#roadSteps li'));
 const sequenceResult = document.querySelector('#sequenceResult');
 const resetSequence = document.querySelector('#resetSequence');
+const sequenceReviewButton = document.querySelector('#sequenceReviewButton');
 let nextSequenceIndex = 0;
+let sequenceReview = false;
 
 function shuffledIndexes() {
   const values = sequenceSteps.map((_, index) => index);
@@ -333,17 +373,17 @@ function shuffledIndexes() {
   return values;
 }
 
-function buildSequence() {
+function buildSequence(order = shuffledIndexes()) {
   nextSequenceIndex = 0;
   sequencePool.replaceChildren();
   sequenceResult.textContent = 'Первый шаг начинается с внимания.';
   roadStepElements.forEach((item, index) => {
-    item.classList.remove('is-filled');
+    item.classList.remove('is-filled', 'is-local-choice', 'is-local-correct', 'is-local-wrong');
     item.querySelector('strong').textContent = '…';
     item.querySelector('span').textContent = String(index + 1);
   });
 
-  shuffledIndexes().forEach((stepIndex) => {
+  order.forEach((stepIndex) => {
     const step = sequenceSteps[stepIndex];
     const button = document.createElement('button');
     button.type = 'button';
@@ -355,7 +395,11 @@ function buildSequence() {
   });
 }
 
-function chooseSequenceStep(button, stepIndex) {
+function chooseSequenceStep(button, stepIndex, silent = false) {
+  if (document.body.classList.contains('mode-student')) {
+    window.dispatchEvent(new CustomEvent('lesson:studentsequencechoice', { detail: { button, stepIndex } }));
+    return;
+  }
   if (stepIndex !== nextSequenceIndex) {
     button.classList.remove('is-wrong');
     window.requestAnimationFrame(() => button.classList.add('is-wrong'));
@@ -375,34 +419,54 @@ function chooseSequenceStep(button, stepIndex) {
 
   if (nextSequenceIndex === sequenceSteps.length) {
     sequenceResult.textContent = 'Помощь продолжилась даже после отъезда самарянина.';
-    showToast('Путь помощи собран');
+    if (!silent) showToast('Путь помощи собран');
   } else {
     sequenceResult.textContent = `Верно. Теперь шаг ${nextSequenceIndex + 1}.`;
   }
 }
 
-resetSequence.addEventListener('click', buildSequence);
+resetSequence.addEventListener('click', () => {
+  buildSequence();
+  if (!document.body.classList.contains('mode-student')) {
+    sequenceReview = false;
+    sequenceReviewButton.textContent = 'Проверяем вместе';
+    sequenceReviewButton.disabled = false;
+  }
+});
+sequenceReviewButton.addEventListener('click', () => {
+  sequenceReview = true;
+  sequenceReviewButton.textContent = 'Идёт общая проверка';
+  sequenceReviewButton.disabled = true;
+  showToast('Ученики увидят проверку своих ответов');
+});
 buildSequence();
 
 // Choosing who became a neighbor
 const choiceFeedback = document.querySelector('#choiceFeedback');
 const finalQuote = document.querySelector('#finalQuote');
-document.querySelectorAll('[data-person]').forEach((button) => {
-  button.addEventListener('click', () => {
-    document.querySelectorAll('[data-person]').forEach((candidate) => {
-      candidate.classList.remove('is-correct', 'is-incorrect');
-    });
+function selectNeighbor(person) {
+  const buttons = Array.from(document.querySelectorAll('[data-person]'));
+  buttons.forEach((candidate) => candidate.classList.remove('is-correct', 'is-incorrect'));
+  const button = buttons.find((candidate) => candidate.dataset.person === person);
+  if (!button) {
+    choiceFeedback.textContent = 'По каким поступкам мы это понимаем?';
+    finalQuote.hidden = true;
+    return;
+  }
 
-    if (button.dataset.person === 'samaritan') {
-      button.classList.add('is-correct');
-      choiceFeedback.textContent = 'Самарянин стал ближним, потому что проявил милосердие делом.';
-      finalQuote.hidden = false;
-    } else {
-      button.classList.add('is-incorrect');
-      choiceFeedback.textContent = 'Он увидел пострадавшего, но прошёл мимо. Кто остановился и помог?';
-      finalQuote.hidden = true;
-    }
-  });
+  if (person === 'samaritan') {
+    button.classList.add('is-correct');
+    choiceFeedback.textContent = 'Самарянин стал ближним, потому что проявил милосердие делом.';
+    finalQuote.hidden = false;
+  } else {
+    button.classList.add('is-incorrect');
+    choiceFeedback.textContent = 'Он увидел пострадавшего, но прошёл мимо. Кто остановился и помог?';
+    finalQuote.hidden = true;
+  }
+}
+
+document.querySelectorAll('[data-person]').forEach((button) => {
+  button.addEventListener('click', () => selectNeighbor(button.dataset.person));
 });
 
 // School situation prompts
@@ -442,8 +506,35 @@ const promiseForm = document.querySelector('#promiseForm');
 const promiseRoad = document.querySelector('#promiseRoad');
 let promiseCount = 0;
 
+function renderPromises(values) {
+  const uniqueValues = values.filter((value, index, all) => all.findIndex((candidate) => (
+    String(candidate).trim().toLocaleLowerCase('ru') === String(value).trim().toLocaleLowerCase('ru')
+  )) === index);
+  const nextValues = uniqueValues.slice(-8).map((value) => String(value));
+  const currentValues = Array.from(promiseRoad.querySelectorAll('.promise-note')).map((note) => note.textContent);
+  if (currentValues.length === nextValues.length
+    && currentValues.every((value, index) => value === nextValues[index])) {
+    return;
+  }
+  promiseRoad.replaceChildren();
+  nextValues.forEach((text, index) => {
+    const note = document.createElement('span');
+    note.className = 'promise-note';
+    note.textContent = text;
+    note.style.setProperty('--note-tilt', `${index % 2 === 0 ? -2 : 2}deg`);
+    promiseRoad.append(note);
+  });
+  promiseCount = promiseRoad.querySelectorAll('.promise-note').length;
+  if (promiseCount === 0) {
+    const empty = document.createElement('p');
+    empty.textContent = 'Каждый добрый поступок становится следующим шагом.';
+    promiseRoad.append(empty);
+  }
+}
+
 promiseForm.addEventListener('submit', (event) => {
   event.preventDefault();
+  if (document.body.classList.contains('mode-student')) return;
   const input = promiseForm.elements.promise;
   const text = input.value.trim();
   if (!text) {
@@ -451,21 +542,10 @@ promiseForm.addEventListener('submit', (event) => {
     return;
   }
 
-  if (promiseCount === 0) promiseRoad.replaceChildren();
-  const note = document.createElement('span');
-  note.className = 'promise-note';
-  note.textContent = text;
-  note.style.setProperty('--note-tilt', `${promiseCount % 2 === 0 ? -2 : 2}deg`);
-  promiseRoad.append(note);
-  promiseCount += 1;
+  const values = Array.from(promiseRoad.querySelectorAll('.promise-note')).map((note) => note.textContent);
+  renderPromises([...values, text]);
   input.value = '';
   showToast('Поступок добавлен на общий путь');
-
-  if (promiseCount >= 8) {
-    const oldest = promiseRoad.querySelector('.promise-note');
-    oldest?.remove();
-    promiseCount = promiseRoad.querySelectorAll('.promise-note').length;
-  }
 });
 
 // Close floating panels when clicking elsewhere
@@ -475,6 +555,182 @@ document.addEventListener('click', (event) => {
     timerButton.setAttribute('aria-expanded', 'false');
   }
 });
+
+function getSharedState() {
+  const selectedPerson = document.querySelector('[data-person].is-correct, [data-person].is-incorrect');
+  const scenarioSelections = {};
+  document.querySelectorAll('[data-scenario]').forEach((scene) => {
+    scenarioSelections[scene.dataset.scenario] = scene.querySelector('[data-mode].is-selected')?.dataset.mode || '';
+  });
+
+  return {
+    scene: currentScene,
+    timer: {
+      seconds: timerSeconds,
+      initial: timerInitial,
+      running: Boolean(timerInterval),
+      endsAt: timerDeadline
+    },
+    roles: Array.from(roleList.children).map((item) => item.textContent),
+    excuses: excuses.map((item) => ({ character: item.character, text: item.text })),
+    samaritanReveal: !document.querySelector('.reveal-answer')?.hidden,
+    sequence: {
+      order: Array.from(sequencePool.querySelectorAll('[data-step]')).map((button) => Number(button.dataset.step)),
+      progress: nextSequenceIndex
+    },
+    sequenceReview,
+    neighbor: selectedPerson?.dataset.person || '',
+    scenarios: scenarioSelections,
+    promises: Array.from(promiseRoad.querySelectorAll('.promise-note')).map((note) => note.textContent),
+    finished: !lessonComplete.hidden
+  };
+}
+
+function applySharedState(state) {
+  if (!state || typeof state !== 'object') return;
+  applyingSharedState = true;
+  try {
+    if (Number.isInteger(state.scene)) setScene(state.scene, { resetTimer: false });
+
+    if (state.timer && typeof state.timer === 'object') {
+      stopTimer();
+      timerInitial = Math.max(1, Number(state.timer.initial) || 60);
+      timerSeconds = Math.max(0, Number(state.timer.seconds) || 0);
+      const endsAt = Number(state.timer.endsAt) || 0;
+      if (state.timer.running && endsAt > Date.now()) {
+        timerSeconds = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000));
+        startTimer(endsAt);
+      } else {
+        paintTimer();
+      }
+    }
+
+    if (Array.isArray(state.roles)) {
+      const nextRoles = state.roles.slice(0, roles.length).map((role) => String(role).slice(0, 40));
+      const currentRoles = Array.from(roleList.children).map((item) => item.textContent);
+      if (JSON.stringify(nextRoles) !== JSON.stringify(currentRoles)) {
+        roleList.replaceChildren();
+        nextRoles.forEach((role) => {
+          const chip = document.createElement('span');
+          chip.textContent = role;
+          roleList.append(chip);
+        });
+      }
+      roleIndex = roleList.children.length;
+      currentRole.textContent = roleIndex ? roleList.lastElementChild.textContent : 'Кого позовём первым?';
+      revealRoleButton.textContent = roleIndex >= roles.length ? 'Сбросить роли' : 'Следующая роль';
+    }
+
+    if (Array.isArray(state.excuses)) {
+      const nextExcuses = state.excuses.slice(0, 30).map((item) => ({
+        character: String(item.character || '').slice(0, 30),
+        text: String(item.text || '').slice(0, 160)
+      }));
+      if (JSON.stringify(nextExcuses) !== JSON.stringify(excuses)) {
+        excuses.splice(0, excuses.length, ...nextExcuses);
+        renderExcuses();
+      }
+    }
+
+    const revealButton = document.querySelector('.reveal-trigger');
+    const revealAnswer = document.querySelector('.reveal-answer');
+    if (revealButton && revealAnswer) {
+      revealAnswer.hidden = !state.samaritanReveal;
+      revealButton.setAttribute('aria-expanded', String(Boolean(state.samaritanReveal)));
+      revealButton.textContent = state.samaritanReveal ? 'Скрыть поступок героя' : 'Открыть поступок героя';
+    }
+
+    sequenceReview = Boolean(state.sequenceReview);
+    sequenceReviewButton.textContent = sequenceReview ? 'Идёт общая проверка' : 'Проверяем вместе';
+    sequenceReviewButton.disabled = sequenceReview;
+
+    if (!document.body.classList.contains('mode-student') && state.sequence && Array.isArray(state.sequence.order)) {
+      const order = state.sequence.order.filter((value) => Number.isInteger(value) && value >= 0 && value < sequenceSteps.length);
+      buildSequence(order.length === sequenceSteps.length ? order : shuffledIndexes());
+      const progress = Math.max(0, Math.min(sequenceSteps.length, Number(state.sequence.progress) || 0));
+      for (let index = 0; index < progress; index += 1) {
+        const button = sequencePool.querySelector(`[data-step="${index}"]`);
+        if (button) chooseSequenceStep(button, index, true);
+      }
+    }
+
+    if (!document.body.classList.contains('mode-student')) {
+      selectNeighbor(String(state.neighbor || ''));
+    }
+
+    if (!document.body.classList.contains('mode-student') && state.scenarios && typeof state.scenarios === 'object') {
+      document.querySelectorAll('[data-scenario]').forEach((scene) => {
+        const mode = state.scenarios[scene.dataset.scenario] || '';
+        const response = scene.querySelector('.scenario-response');
+        scene.querySelectorAll('[data-mode]').forEach((button) => {
+          button.classList.toggle('is-selected', button.dataset.mode === mode);
+        });
+        if (mode && scenarioCopy[scene.dataset.scenario]?.[mode]) {
+          const [heading, prompt] = scenarioCopy[scene.dataset.scenario][mode];
+          response.querySelector('strong').textContent = heading;
+          response.querySelector('p').textContent = prompt;
+          response.hidden = false;
+        } else {
+          response.hidden = true;
+        }
+      });
+    }
+
+    if (Array.isArray(state.promises)) {
+      renderPromises(state.promises.map((value) => String(value).slice(0, 100)));
+    }
+    lessonComplete.hidden = !state.finished;
+  } finally {
+    applyingSharedState = false;
+  }
+}
+
+let stateSignalTimeout;
+function signalStateChange() {
+  if (applyingSharedState) return;
+  window.clearTimeout(stateSignalTimeout);
+  stateSignalTimeout = window.setTimeout(() => {
+    window.dispatchEvent(new CustomEvent('lesson:statechange', { detail: getSharedState() }));
+  }, 30);
+}
+
+document.addEventListener('click', signalStateChange);
+document.addEventListener('submit', signalStateChange);
+
+window.lessonApp = {
+  applySharedState,
+  getCurrentScene: () => currentScene,
+  getSharedState,
+  publishExcuse(character, text) {
+    const safeText = String(text || '').trim().slice(0, 160);
+    if (!safeText) return;
+    const safeCharacter = String(character || 'Класс').slice(0, 30);
+    const duplicate = excuses.some((item) => item.character === safeCharacter
+      && item.text.toLocaleLowerCase('ru') === safeText.toLocaleLowerCase('ru'));
+    if (duplicate) {
+      showToast('Такой ответ уже опубликован');
+      return;
+    }
+    excuses.push({ character: safeCharacter, text: safeText });
+    renderExcuses();
+    signalStateChange();
+  },
+  publishPromise(text) {
+    const values = Array.from(promiseRoad.querySelectorAll('.promise-note')).map((note) => note.textContent);
+    const safeText = String(text || '').trim().slice(0, 100);
+    if (values.some((value) => value.toLocaleLowerCase('ru') === safeText.toLocaleLowerCase('ru'))) {
+      showToast('Такое решение уже опубликовано');
+      return;
+    }
+    renderPromises([...values, safeText]);
+    signalStateChange();
+  },
+  resetSequence: () => buildSequence(),
+  finishLesson,
+  reopenLesson,
+  setScene,
+  showToast
+};
 
 const initialHash = Number(window.location.hash.replace('#', ''));
 setScene(Number.isInteger(initialHash) && initialHash >= 1 && initialHash <= scenes.length ? initialHash - 1 : 0);

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183e3b">
+  <title>Пульт учителя — Кто мой ближний?</title>
+  <link rel="stylesheet" href="control.css">
+</head>
+<body>
+  <header class="control-header">
+    <div>
+      <span>Христианская этика</span>
+      <strong>Пульт учителя</strong>
+    </div>
+    <div class="control-header__actions">
+      <span class="room-pill">Класс <b id="roomCode">—</b></span>
+      <a id="presentationLink" href="./" target="_blank" rel="noopener">Открыть урок ↗</a>
+    </div>
+  </header>
+
+  <main class="control-layout">
+    <section class="control-column">
+      <article class="panel lesson-remote">
+        <p class="kicker">На проекторе сейчас</p>
+        <div class="scene-title"><span id="sceneNumber">1 / 13</span><h1 id="sceneTitle">Кто мой ближний?</h1></div>
+        <div class="scene-nav">
+          <button id="previousScene" type="button">‹ Назад</button>
+          <button class="primary" id="nextScene" type="button">Далее ›</button>
+        </div>
+        <button class="sequence-check" id="sequenceCheck" type="button" hidden>Проверить пути учеников вместе</button>
+      </article>
+
+      <article class="panel join-panel">
+        <div class="join-panel__copy">
+          <p class="kicker">Вход учеников</p>
+          <h2>Наведите камеру</h2>
+          <strong id="roomCodeLarge">—</strong>
+          <span>код класса</span>
+        </div>
+        <div class="qr" id="studentQr" aria-label="QR-код ученической страницы"></div>
+        <button class="secondary" id="projectQr" type="button">Показать QR крупно</button>
+        <div class="copy-row">
+          <input id="studentUrl" readonly aria-label="Ссылка для учеников">
+          <button id="copyLink" type="button">Копировать</button>
+        </div>
+      </article>
+
+      <div class="stats" aria-label="Статистика класса">
+        <div><strong id="studentCount">0</strong><span>в классе</span></div>
+        <div><strong id="answerCount">0</strong><span>ответов</span></div>
+        <div><strong id="kindnessCount">0</strong><span>лучей добра</span></div>
+      </div>
+
+      <article class="panel quick-actions">
+        <form id="broadcastForm">
+          <label for="broadcastInput">Сообщение на все экраны</label>
+          <div class="copy-row">
+            <input id="broadcastInput" maxlength="120" placeholder="Например: обсуждаем в парах">
+            <button class="primary" type="submit">Показать</button>
+          </div>
+        </form>
+        <div class="action-row">
+          <button class="warm" id="kindnessWave" type="button">✦ Волна добра</button>
+          <button id="clearResponses" type="button">Очистить ответы</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel moderation-panel">
+      <div class="moderation-heading">
+        <div><p class="kicker">Премодерация</p><h2>Ответы учеников</h2></div>
+        <span id="pendingCount">0 ждут</span>
+      </div>
+      <div class="moderation-list" id="moderationList" aria-live="polite">
+        <p class="empty">Новые ответы появятся здесь.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>Интерактивный урок разработан <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></footer>
+
+  <div class="qr-dialog" id="qrDialog" hidden role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+    <button id="closeQr" type="button" aria-label="Закрыть">×</button>
+    <p class="kicker">Подключение к классу</p>
+    <h2 id="qrTitle">Наведите камеру телефона</h2>
+    <div class="qr qr--large" id="studentQrLarge"></div>
+    <p>Код класса <strong id="dialogRoomCode">—</strong></p>
+  </div>
+
+  <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+  <script src="qrcode.min.js"></script>
+  <script src="control.js"></script>
+</body>
+</html>
