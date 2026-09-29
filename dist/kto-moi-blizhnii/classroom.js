@@ -61,9 +61,11 @@
   let pollTotalsSignature = '';
   let moderationSignature = '';
   const answeredScenes = new Set(JSON.parse(sessionStorage.getItem('neighborAnsweredScenes') || '[]'));
+  const studentSelections = JSON.parse(sessionStorage.getItem('neighborStudentSelections') || '{}');
   const sequenceProgress = { index: 0, mistakes: 0 };
   const studentSequenceOrder = [];
   let sequenceReviewSeen = false;
+  let correctReveals = {};
   const seenReplyIds = new Set(JSON.parse(sessionStorage.getItem('neighborSeenReplies') || '[]'));
 
   if (!studentId) {
@@ -279,11 +281,14 @@
     visiblePosts.forEach((post) => {
       const card = document.createElement('article');
       card.className = 'live-class-answer';
-      const name = document.createElement('strong');
-      name.textContent = post.name;
       const text = document.createElement('span');
       text.textContent = post.text;
-      card.append(name, text);
+      if (mode === 'teacher') {
+        const name = document.createElement('strong');
+        name.textContent = post.name;
+        card.append(name);
+      }
+      card.append(text);
       if (mode === 'teacher') {
         const actions = document.createElement('span');
         actions.className = 'live-class-answer__actions';
@@ -303,7 +308,7 @@
     target.append(wall);
   }
 
-  function renderPollTotals(totals = {}, responses = []) {
+  function renderPollTotals(totals = {}, responses = [], revealCorrect = false) {
     const scene = window.lessonApp.getCurrentScene();
     const activity = activities[scene];
     if (!activity?.options?.length) {
@@ -328,7 +333,7 @@
       };
     });
     const total = results.reduce((sum, item) => sum + item.count, 0);
-    const signature = JSON.stringify([scene, results.map((item) => [item.value, item.count, item.names])]);
+    const signature = JSON.stringify([scene, mode, revealCorrect, results.map((item) => [item.value, item.count, item.names])]);
     const activeScene = document.querySelectorAll('.scene')[scene];
     const activePoll = activeScene?.querySelector('.live-class-poll');
     if (signature === pollTotalsSignature && (total === 0 || activePoll)) return;
@@ -347,6 +352,7 @@
     results.forEach((item) => {
       const option = document.createElement('div');
       option.className = 'live-class-poll__option';
+      option.classList.toggle('is-correct', Boolean(activity.correct && (mode === 'teacher' || revealCorrect) && item.value === activity.correct));
       const copy = document.createElement('span');
       copy.textContent = item.label;
       const count = document.createElement('b');
@@ -451,7 +457,8 @@
     return {
       ...window.lessonApp.getSharedState(),
       teacherMessage: teacherMessageText,
-      celebrationId
+      celebrationId,
+      correctReveals
     };
   }
 
@@ -485,6 +492,7 @@
       }
       teacherMessageText = String(data.state.teacherMessage || '');
       celebrationId = Number(data.state.celebrationId) || 0;
+      correctReveals = data.state.correctReveals && typeof data.state.correctReveals === 'object' ? data.state.correctReveals : {};
       showTeacherMessage(teacherMessageText);
       renderTeacherData(data);
     } catch (error) {
@@ -498,7 +506,9 @@
       const data = await api(null, { room, studentId });
       window.lessonApp.applySharedState(data.state);
       renderSharedPosts(Array.isArray(data.state.studentPosts) ? data.state.studentPosts : []);
-      renderPollTotals(data.totals || {});
+      correctReveals = data.state.correctReveals && typeof data.state.correctReveals === 'object' ? data.state.correctReveals : {};
+      const currentScene = window.lessonApp.getCurrentScene();
+      const correctRevealed = Boolean(correctReveals[currentScene]);
       teacherMessageText = String(data.state.teacherMessage || '');
       showTeacherMessage(teacherMessageText);
       const nextCelebration = Number(data.state.celebrationId) || 0;
@@ -521,9 +531,17 @@
         sessionStorage.setItem('neighborSeenReplies', JSON.stringify(Array.from(seenReplyIds).slice(-40)));
         privateReplyText.textContent = newestReply.text;
         privateReply.hidden = false;
+        if (newestReply.kind === 'question_resolved') {
+          const resolvedScene = Number(newestReply.scene) || 0;
+          answeredScenes.delete(resolvedScene);
+          score = Math.max(0, score + (Number(newestReply.scoreAdjustment) || 0));
+          saveStudentProgress();
+          if (currentScene === resolvedScene) renderStudentActivity(currentScene);
+        }
       }
-      const currentScene = window.lessonApp.getCurrentScene();
       if (currentScene !== lastStudentScene) renderStudentActivity(currentScene);
+      if (correctRevealed) revealCorrectAnswer(currentScene);
+      renderPollTotals(data.totals || {}, [], correctRevealed);
     } catch {
       window.clearInterval(pollTimer);
       window.location.replace(`student.html?room=${encodeURIComponent(room)}&error=1`);
@@ -543,6 +561,7 @@
     if (mode === 'student' && roomIndicatorCode) roomIndicatorCode.textContent = `${room} · ✦ ${score}`;
     sessionStorage.setItem('neighborStudentScore', String(score));
     sessionStorage.setItem('neighborAnsweredScenes', JSON.stringify(Array.from(answeredScenes)));
+    sessionStorage.setItem('neighborStudentSelections', JSON.stringify(studentSelections));
   }
 
   function awardPoint(scene) {
@@ -554,11 +573,21 @@
 
   async function submitStudentResponse(type, value = '', text = '', awardsPoint = true) {
     const scene = window.lessonApp.getCurrentScene();
+    const alreadyAnswered = answeredScenes.has(scene);
     if (awardsPoint) awardPoint(scene);
     try {
-      await api({ action: 'respond', room, studentId, name: studentName, score, scene, type, value, text });
+      await api({ action: 'respond', room, studentId, name: studentName, score, scene, type, value, text, awarded: awardsPoint });
+      if (value) {
+        studentSelections[scene] = value;
+        saveStudentProgress();
+      }
       return true;
     } catch (error) {
+      if (awardsPoint && !alreadyAnswered) {
+        answeredScenes.delete(scene);
+        score = Math.max(0, score - 1);
+        saveStudentProgress();
+      }
       window.lessonApp.showToast(error.message);
       return false;
     }
@@ -586,6 +615,37 @@
     result.className = 'activity-result';
     result.textContent = message;
     container.append(result);
+  }
+
+  function revealCorrectAnswer(scene) {
+    const activity = activities[scene];
+    if (!activity?.correct) return;
+    const activeScene = document.querySelectorAll('.scene')[scene];
+    if (!activeScene) return;
+    if (scene === 7) {
+      const buttons = Array.from(activeScene.querySelectorAll('[data-person]'));
+      buttons.forEach((button) => {
+        button.disabled = true;
+        button.classList.remove('is-correct', 'is-incorrect');
+        if (button.dataset.person === activity.correct) button.classList.add('is-correct');
+        else if (button.dataset.person === studentSelections[scene]) button.classList.add('is-incorrect');
+      });
+      const feedback = activeScene.querySelector('#choiceFeedback');
+      const quote = activeScene.querySelector('#finalQuote');
+      if (feedback) feedback.textContent = 'Самарянин стал ближним, потому что проявил милосердие делом.';
+      if (quote) quote.hidden = false;
+      return;
+    }
+    const activityBox = activeScene.querySelector('.student-inline-activity');
+    if (!activityBox) return;
+    activityBox.querySelectorAll('.activity-options button').forEach((button) => {
+      button.disabled = true;
+      button.classList.remove('is-correct', 'is-incorrect');
+      if (button.dataset.value === activity.correct) button.classList.add('is-correct');
+      else if (button.dataset.value === studentSelections[scene]) button.classList.add('is-incorrect');
+    });
+    const correctLabel = activity.options.find(([, value]) => value === activity.correct)?.[0] || 'верный вариант';
+    renderResult(activityBox, `Правильный ответ: ${correctLabel}.`);
   }
 
   function renderStudentActivity(scene) {
@@ -645,6 +705,7 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.textContent = label;
+      button.dataset.value = value;
       button.addEventListener('click', async () => {
         if (activity.sequence) {
           if (optionIndex !== sequenceProgress.index) {
@@ -663,14 +724,28 @@
           return;
         }
 
+        const previousSelected = options.querySelector('button.is-selected');
         options.querySelectorAll('button').forEach((candidate) => {
           candidate.classList.remove('is-selected');
           candidate.disabled = true;
         });
         button.classList.add('is-selected');
+        const asksQuestion = activity.type === 'ready' && value === 'question';
         const isCorrect = !activity.correct || value === activity.correct;
-        await submitStudentResponse(activity.type, value, label, isCorrect);
-        renderResult(activityBox, isCorrect ? 'Ответ сохранён · +1 луч добра' : 'Ответ сохранён. Обсудим его вместе.');
+        const sent = await submitStudentResponse(activity.type, value, label, isCorrect && !asksQuestion);
+        if (!sent) {
+          options.querySelectorAll('button').forEach((candidate) => { candidate.disabled = false; });
+          button.classList.remove('is-selected');
+          previousSelected?.classList.add('is-selected');
+          return;
+        }
+        if (activity.type === 'role') {
+          options.querySelectorAll('button').forEach((candidate) => { candidate.disabled = false; });
+        }
+        renderResult(activityBox, asksQuestion
+          ? 'Учитель увидел вопрос. Дождитесь ответа — кнопки снова откроются.'
+          : activity.type === 'role' ? 'Роль выбрана. Можно перейти на другую свободную роль.'
+            : isCorrect ? 'Ответ сохранён · +1 луч добра' : 'Ответ сохранён. Обсудим его вместе.');
       });
       options.append(button);
     });
@@ -837,6 +912,7 @@
         window.lessonApp.applySharedState(data.state);
         teacherMessageText = String(data.state.teacherMessage || '');
         celebrationId = Number(data.state.celebrationId) || 0;
+        correctReveals = data.state.correctReveals && typeof data.state.correctReveals === 'object' ? data.state.correctReveals : {};
         renderTeacherData(data);
       }
       paintRoomIdentity();

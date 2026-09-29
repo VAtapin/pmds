@@ -18,7 +18,13 @@ function send_json(int $status, array $payload): never
 function clean_text(mixed $value, int $limit = 160): string
 {
     $text = trim(strip_tags((string) ($value ?? '')));
-    return mb_substr($text, 0, $limit);
+    return function_exists('mb_substr') ? mb_substr($text, 0, $limit) : substr($text, 0, $limit);
+}
+
+function lower_text(mixed $value): string
+{
+    $text = (string) ($value ?? '');
+    return function_exists('mb_strtolower') ? mb_strtolower($text) : strtolower($text);
 }
 
 function room_directory(): string
@@ -63,9 +69,19 @@ function public_room(array $room, string $teacherKey = '', string $studentId = '
     $isTeacher = $teacherKey !== '' && hash_equals((string) $room['teacherKey'], $teacherKey);
     $state = $room['state'];
     if (!$isTeacher && is_array($state['studentPosts'] ?? null)) {
-        $state['studentPosts'] = array_values(array_filter(
-            $state['studentPosts'],
-            static fn(array $post): bool => ($post['status'] ?? '') === 'approved'
+        $state['studentPosts'] = array_values(array_map(
+            static fn(array $post): array => [
+                'id' => $post['id'] ?? '',
+                'scene' => (int) ($post['scene'] ?? 0),
+                'type' => $post['type'] ?? '',
+                'text' => $post['text'] ?? '',
+                'status' => 'approved',
+                'edited' => (bool) ($post['edited'] ?? false),
+            ],
+            array_filter(
+                $state['studentPosts'],
+                static fn(array $post): bool => ($post['status'] ?? '') === 'approved'
+            )
         ));
     }
 
@@ -262,13 +278,74 @@ if ($action === 'moderatePost') {
     send_json(200, public_room($updated ?? $room, $teacherKey));
 }
 
+if ($action === 'resolveQuestion') {
+    $teacherKey = clean_text($body['teacherKey'] ?? '', 80);
+    if (!hash_equals((string) $room['teacherKey'], $teacherKey)) {
+        send_json(403, ['ok' => false, 'error' => 'Нет доступа учителя']);
+    }
+    $responseId = clean_text($body['responseId'] ?? '', 80);
+    $resolution = clean_text($body['resolution'] ?? '', 20);
+    $messages = [
+        'closed' => 'Учитель ответил: вопрос закрыт. Теперь можно нажать «Готов».',
+        'coming' => 'Учитель сейчас подойдёт. После разговора можно нажать «Готов».',
+        'ok' => 'Учитель увидел ваш вопрос. Можно снова выбрать «Готов».',
+    ];
+    if (!isset($messages[$resolution])) {
+        send_json(400, ['ok' => false, 'error' => 'Неизвестный ответ учителя']);
+    }
+    $questionResolved = false;
+    $updated = mutate_room($code, static function (array $current) use ($responseId, $resolution, $messages, &$questionResolved): array {
+        $questionIndex = null;
+        $question = null;
+        foreach ($current['responses'] ?? [] as $index => $response) {
+            if (($response['id'] ?? '') === $responseId
+                && ($response['type'] ?? '') === 'ready'
+                && ($response['value'] ?? '') === 'question') {
+                $questionIndex = $index;
+                $question = $response;
+                break;
+            }
+        }
+        if ($questionIndex === null || !is_array($question)) {
+            return $current;
+        }
+        $questionResolved = true;
+        array_splice($current['responses'], $questionIndex, 1);
+        $studentId = clean_text($question['studentId'] ?? '', 80);
+        $scoreAdjustment = array_key_exists('awarded', $question) && $question['awarded'] === false ? 0 : -1;
+        if ($studentId !== '' && isset($current['students'][$studentId]) && $scoreAdjustment !== 0) {
+            $current['students'][$studentId]['score'] = max(0, (int) ($current['students'][$studentId]['score'] ?? 0) + $scoreAdjustment);
+        }
+        if (!is_array($current['studentMessages'][$studentId] ?? null)) {
+            $current['studentMessages'][$studentId] = [];
+        }
+        $current['studentMessages'][$studentId][] = [
+            'id' => ((int) floor(microtime(true) * 1000)) . '-' . make_code(4),
+            'text' => $messages[$resolution],
+            'kind' => 'question_resolved',
+            'scene' => (int) ($question['scene'] ?? 0),
+            'scoreAdjustment' => $scoreAdjustment,
+            'createdAt' => (int) floor(microtime(true) * 1000),
+        ];
+        $current['studentMessages'][$studentId] = array_slice($current['studentMessages'][$studentId], -20);
+        $current['revision'] += 1;
+        $current['updatedAt'] = (int) floor(microtime(true) * 1000);
+        return $current;
+    });
+    if (!$questionResolved) {
+        send_json(404, ['ok' => false, 'error' => 'Вопрос уже закрыт или не найден']);
+    }
+    send_json(200, public_room($updated ?? $room, $teacherKey));
+}
+
 $studentId = clean_text($body['studentId'] ?? '', 80);
 $studentName = clean_text($body['name'] ?? '', 32) ?: 'Ученик';
 if ($studentId === '') {
     send_json(400, ['ok' => false, 'error' => 'Не указан ученик']);
 }
 
-$updated = mutate_room($code, static function (array $current) use ($body, $action, $studentId, $studentName): array {
+$roleConflict = '';
+$updated = mutate_room($code, static function (array $current) use ($body, $action, $studentId, $studentName, &$roleConflict): array {
     $score = max(0, min(99, (int) ($body['score'] ?? 0)));
     $current['students'][$studentId] = [
         'id' => $studentId,
@@ -287,10 +364,22 @@ $updated = mutate_room($code, static function (array $current) use ($body, $acti
             'type' => clean_text($body['type'] ?? '', 32),
             'value' => clean_text($body['value'] ?? '', 80),
             'text' => clean_text($body['text'] ?? '', 180),
+            'awarded' => (bool) ($body['awarded'] ?? false),
             'score' => $score,
             'createdAt' => (int) floor(microtime(true) * 1000),
         ];
         $singleChoiceTypes = ['ready', 'role', 'motive', 'barrier', 'neighbor', 'sequence_order'];
+        if ($responseItem['type'] === 'role') {
+            foreach ($current['responses'] ?? [] as $existing) {
+                if ((int) ($existing['scene'] ?? -1) === $responseItem['scene']
+                    && ($existing['type'] ?? '') === 'role'
+                    && ($existing['value'] ?? '') === $responseItem['value']
+                    && ($existing['studentId'] ?? '') !== $responseItem['studentId']) {
+                    $roleConflict = clean_text($existing['name'] ?? 'другой ученик', 32);
+                    return $current;
+                }
+            }
+        }
         if (in_array($responseItem['type'], $singleChoiceTypes, true)) {
             foreach ($current['responses'] ?? [] as $index => $existing) {
                 if (($existing['studentId'] ?? '') !== $responseItem['studentId']
@@ -298,8 +387,8 @@ $updated = mutate_room($code, static function (array $current) use ($body, $acti
                     || ($existing['type'] ?? '') !== $responseItem['type']) {
                     continue;
                 }
-                $unchanged = mb_strtolower((string) ($existing['value'] ?? '')) === mb_strtolower($responseItem['value'])
-                    && mb_strtolower((string) ($existing['text'] ?? '')) === mb_strtolower($responseItem['text']);
+                $unchanged = lower_text($existing['value'] ?? '') === lower_text($responseItem['value'])
+                    && lower_text($existing['text'] ?? '') === lower_text($responseItem['text']);
                 if ($unchanged) {
                     return $current;
                 }
@@ -315,8 +404,8 @@ $updated = mutate_room($code, static function (array $current) use ($body, $acti
             if (($existing['studentId'] ?? '') === $responseItem['studentId']
                 && (int) ($existing['scene'] ?? -1) === $responseItem['scene']
                 && ($existing['type'] ?? '') === $responseItem['type']
-                && mb_strtolower((string) ($existing['value'] ?? '')) === mb_strtolower($responseItem['value'])
-                && mb_strtolower((string) ($existing['text'] ?? '')) === mb_strtolower($responseItem['text'])) {
+                && lower_text($existing['value'] ?? '') === lower_text($responseItem['value'])
+                && lower_text($existing['text'] ?? '') === lower_text($responseItem['text'])) {
                 $duplicate = true;
                 break;
             }
@@ -347,5 +436,9 @@ $updated = mutate_room($code, static function (array $current) use ($body, $acti
     }
     return $current;
 });
+
+if ($roleConflict !== '') {
+    send_json(409, ['ok' => false, 'error' => 'Эту роль уже выбрал ' . $roleConflict . '. Выберите другую.']);
+}
 
 send_json(200, public_room($updated ?? $room));

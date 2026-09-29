@@ -32,7 +32,16 @@ function publicRoom(room, teacherKey = '', studentId = '') {
   const isTeacher = teacherKey && teacherKey === room.teacherKey;
   const state = structuredClone(room.state);
   if (!isTeacher && Array.isArray(state.studentPosts)) {
-    state.studentPosts = state.studentPosts.filter((post) => post.status === 'approved');
+    state.studentPosts = state.studentPosts
+      .filter((post) => post.status === 'approved')
+      .map((post) => ({
+        id: post.id,
+        scene: post.scene,
+        type: post.type,
+        text: post.text,
+        status: post.status,
+        edited: Boolean(post.edited)
+      }));
   }
   const result = {
     ok: true,
@@ -166,6 +175,42 @@ async function handleSync(request, response, url) {
     return sendJson(response, 200, publicRoom(room, room.teacherKey));
   }
 
+  if (body.action === 'resolveQuestion') {
+    if (cleanText(body.teacherKey, 80) !== room.teacherKey) {
+      return sendJson(response, 403, { ok: false, error: 'Нет доступа учителя' });
+    }
+    const responseId = cleanText(body.responseId, 80);
+    const resolution = cleanText(body.resolution, 20);
+    const messages = {
+      closed: 'Учитель ответил: вопрос закрыт. Теперь можно нажать «Готов».',
+      coming: 'Учитель сейчас подойдёт. После разговора можно нажать «Готов».',
+      ok: 'Учитель увидел ваш вопрос. Можно снова выбрать «Готов».'
+    };
+    const questionIndex = room.responses.findIndex((item) => item.id === responseId
+      && item.type === 'ready' && item.value === 'question');
+    if (questionIndex < 0 || !messages[resolution]) {
+      return sendJson(response, 404, { ok: false, error: 'Вопрос уже закрыт или не найден' });
+    }
+    const [question] = room.responses.splice(questionIndex, 1);
+    const scoreAdjustment = question.awarded === false ? 0 : -1;
+    if (room.students[question.studentId] && scoreAdjustment) {
+      room.students[question.studentId].score = Math.max(0, room.students[question.studentId].score + scoreAdjustment);
+    }
+    room.studentMessages[question.studentId] ||= [];
+    room.studentMessages[question.studentId].push({
+      id: `${Date.now()}-${code(4)}`,
+      text: messages[resolution],
+      kind: 'question_resolved',
+      scene: question.scene,
+      scoreAdjustment,
+      createdAt: Date.now()
+    });
+    room.studentMessages[question.studentId] = room.studentMessages[question.studentId].slice(-20);
+    room.revision += 1;
+    room.updatedAt = Date.now();
+    return sendJson(response, 200, publicRoom(room, room.teacherKey));
+  }
+
   const studentId = cleanText(body.studentId, 80);
   const studentName = cleanText(body.name, 32) || 'Ученик';
   if (!studentId) return sendJson(response, 400, { ok: false, error: 'Не указан ученик' });
@@ -186,10 +231,20 @@ async function handleSync(request, response, url) {
       type: cleanText(body.type, 32),
       value: cleanText(body.value, 80),
       text: cleanText(body.text, 180),
+      awarded: Boolean(body.awarded),
       score: room.students[studentId].score,
       createdAt: Date.now()
     };
     const singleChoiceTypes = new Set(['ready', 'role', 'motive', 'barrier', 'neighbor', 'sequence_order']);
+    if (responseItem.type === 'role') {
+      const occupied = room.responses.find((item) => item.scene === responseItem.scene
+        && item.type === 'role'
+        && item.value === responseItem.value
+        && item.studentId !== responseItem.studentId);
+      if (occupied) {
+        return sendJson(response, 409, { ok: false, error: `Роль «${responseItem.text}» уже выбрал ${occupied.name}. Выберите другую.` });
+      }
+    }
     const existingChoiceIndex = singleChoiceTypes.has(responseItem.type)
       ? room.responses.findIndex((item) => item.studentId === responseItem.studentId
         && item.scene === responseItem.scene

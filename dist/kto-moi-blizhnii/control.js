@@ -15,6 +15,7 @@
     barrier: 'Что мешает помочь', sequence_order: 'Путь помощи', neighbor: 'Кто стал ближним',
     school_help: 'Школьная ситуация', promise: 'Личное решение', takeaway: 'Итог урока'
   };
+  const correctAnswers = { 4: 'Сострадание', 7: 'Самарянин' };
 
   const byId = (id) => document.getElementById(id);
   const roomCode = byId('roomCode');
@@ -25,6 +26,7 @@
   const previousScene = byId('previousScene');
   const nextScene = byId('nextScene');
   const sequenceCheck = byId('sequenceCheck');
+  const correctAnswer = byId('correctAnswer');
   const studentUrl = byId('studentUrl');
   const presentationLink = byId('presentationLink');
   const studentCount = byId('studentCount');
@@ -71,6 +73,13 @@
     sequenceCheck.hidden = index !== 6;
     sequenceCheck.disabled = Boolean(state?.sequenceReview);
     sequenceCheck.textContent = state?.sequenceReview ? 'Общая проверка идёт' : 'Проверить пути учеников вместе';
+    const correctLabel = correctAnswers[index];
+    const answerRevealed = Boolean(state?.correctReveals?.[index]);
+    correctAnswer.hidden = !correctLabel;
+    correctAnswer.disabled = answerRevealed;
+    correctAnswer.textContent = answerRevealed
+      ? `Правильный ответ показан: «${correctLabel}»`
+      : `Показать правильный ответ: «${correctLabel}»`;
   }
 
   function responseText(item) {
@@ -79,7 +88,8 @@
 
   function answerCard(post, response) {
     const card = document.createElement('article');
-    card.className = `answer-card${post?.status === 'approved' ? ' is-approved' : ''}`;
+    const isQuestion = response.type === 'ready' && response.value === 'question';
+    card.className = `answer-card${post?.status === 'approved' ? ' is-approved' : ''}${isQuestion ? ' is-question' : ''}`;
     const avatar = document.createElement('span');
     avatar.className = 'answer-avatar';
     avatar.textContent = (post?.name || response.name || 'У').slice(0, 1).toUpperCase();
@@ -92,9 +102,16 @@
     meta.textContent = `${labels[post?.type || response.type] || 'Ответ'} · этап ${(post?.scene ?? response.scene) + 1}`;
     header.append(name, meta);
     const text = document.createElement('p');
-    text.textContent = post?.text || responseText(response);
+    text.textContent = isQuestion ? 'Есть вопрос — ожидает ответа учителя' : post?.text || responseText(response);
     copy.append(header, text);
-    if (post) {
+    if (isQuestion) {
+      const actions = document.createElement('div');
+      actions.className = 'answer-actions question-actions';
+      actions.append(questionButton('✓ Вопрос закрыт', 'closed', 'approve'));
+      actions.append(questionButton('↗ Сейчас подойду', 'coming', 'warm'));
+      actions.append(questionButton('Окей', 'ok'));
+      copy.append(actions);
+    } else if (post) {
       const actions = document.createElement('div');
       actions.className = 'answer-actions';
       if (post.status !== 'approved') actions.append(actionButton('✓ Показать всем', 'approve', 'approve'));
@@ -114,6 +131,15 @@
       button.addEventListener('click', () => moderate(post, operation));
       return button;
     }
+
+    function questionButton(textValue, resolution, className = '') {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = textValue;
+      button.className = className;
+      button.addEventListener('click', () => resolveQuestion(response, resolution));
+      return button;
+    }
   }
 
   function renderData(data) {
@@ -124,7 +150,8 @@
     studentCount.textContent = String(data.connectedCount || 0);
     answerCount.textContent = String(responses.length);
     kindnessCount.textContent = String(students.reduce((sum, student) => sum + (Number(student.score) || 0), 0));
-    pendingCount.textContent = `${posts.filter((post) => post.status === 'pending').length} ждут`;
+    const questions = responses.filter((response) => response.type === 'ready' && response.value === 'question');
+    pendingCount.textContent = `${posts.filter((post) => post.status === 'pending').length + questions.length} ждут`;
     moderationList.replaceChildren();
     if (!responses.length) {
       const empty = document.createElement('p');
@@ -175,6 +202,23 @@
     }
   }
 
+  async function resolveQuestion(response, resolution) {
+    try {
+      const data = await api({ action: 'resolveQuestion', room, teacherKey, responseId: response.id, resolution });
+      revision = Number(data.revision) || revision;
+      state = data.state;
+      renderData(data);
+      const notices = {
+        closed: 'Ребёнок получил: «Вопрос закрыт»',
+        coming: 'Ребёнок получил: «Сейчас подойду»',
+        ok: 'Ребёнок получил ответ «Окей»'
+      };
+      showToast(notices[resolution]);
+    } catch (error) {
+      showToast(error.message);
+    }
+  }
+
   async function poll() {
     try {
       const data = await api();
@@ -214,6 +258,10 @@
     else updateState({ scene: current + 1, finished: false, sequenceReview: false });
   });
   sequenceCheck.addEventListener('click', () => updateState({ sequenceReview: true }));
+  correctAnswer.addEventListener('click', () => {
+    const scene = Math.max(0, Number(state?.scene) || 0);
+    updateState({ correctReveals: { ...(state?.correctReveals || {}), [scene]: true } });
+  });
   broadcastForm.addEventListener('submit', (event) => {
     event.preventDefault();
     updateState({ teacherMessage: broadcastInput.value.trim().slice(0, 120) });
