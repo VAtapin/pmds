@@ -10,7 +10,9 @@
 | --- | --- |
 | Публичный вход ученика | `https://ns1.atapin.de/` |
 | Вход учителя | `https://ns1.atapin.de/teacher.html` |
+| Инструкция учителя | `https://ns1.atapin.de/teacher-guide.html` |
 | Вход ученика | `https://ns1.atapin.de/student.html` |
+| Инструкция ученика | `https://ns1.atapin.de/student-guide.html` |
 | Ученическая ссылка конкретного класса | `https://ns1.atapin.de/student.html?room=КОД` |
 | Основной экран урока | `https://ns1.atapin.de/lesson.html?mode=teacher&room=КОД` |
 | Отдельный пульт учителя | `https://ns1.atapin.de/control.html?room=КОД` |
@@ -405,6 +407,9 @@ PHP-процесс должен иметь право создавать это�
 | `classroom.js` | создание комнаты, синхронизация и ученические задания |
 | `teacher.html` | отдельный вход учителя |
 | `student.html` | вход ученика по имени и коду класса |
+| `teacher-guide.html` | подробная пользовательская инструкция учителя |
+| `student-guide.html` | отдельная инструкция ученика без ссылки на учительский вход |
+| `guide.css` | оформление обеих страниц инструкции |
 | `control.html` | отдельный пульт учителя |
 | `control.js` | управление комнатой и модерация |
 | `sync.php` | серверный API и временное хранилище комнат |

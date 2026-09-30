@@ -1,0 +1,238 @@
+:root {
+  --ink: #193b3a;
+  --ink-strong: #102d2b;
+  --ink-soft: #52645f;
+  --cream: #fffaf0;
+  --paper: #fffdf7;
+  --gold: #e7b950;
+  --gold-soft: #f4e7c8;
+  --coral: #c85c3f;
+  --teal: #2e6e68;
+  --line: rgba(25, 59, 58, 0.16);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  min-width: 320px;
+  margin: 0;
+  color: var(--ink-strong);
+  background: #f4ead6;
+  font-family: "Segoe UI", Arial, sans-serif;
+  line-height: 1.62;
+}
+
+a { color: var(--teal); }
+
+.guide-header {
+  color: white;
+  background:
+    linear-gradient(100deg, rgba(16, 45, 43, 0.97), rgba(25, 59, 58, 0.78)),
+    url('assets/scene-road.webp') center 46% / cover;
+}
+
+.guide-header__inner,
+.guide-layout,
+.guide-footer {
+  width: min(76rem, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.guide-header__inner { padding: clamp(2.2rem, 7vw, 5.5rem) 0; }
+
+.guide-kicker {
+  margin: 0 0 0.55rem;
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.guide-header h1 {
+  max-width: 15ch;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.55rem, 7vw, 5.6rem);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+}
+
+.guide-intro {
+  max-width: 46rem;
+  margin: 1.2rem 0 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+}
+
+.guide-back {
+  display: inline-flex;
+  margin-top: 1.5rem;
+  padding: 0.65rem 0.9rem;
+  color: var(--ink-strong);
+  background: var(--gold);
+  border-radius: 0.7rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.guide-layout {
+  display: grid;
+  grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding: 2rem 0 4rem;
+}
+
+.guide-nav {
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+  padding: 1.15rem;
+  background: rgba(255, 250, 240, 0.94);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  box-shadow: 0 12px 30px rgba(25, 59, 58, 0.08);
+}
+
+.guide-nav strong {
+  display: block;
+  margin-bottom: 0.65rem;
+  color: var(--coral);
+  font-size: 0.78rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.guide-nav a {
+  display: block;
+  padding: 0.38rem 0;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.guide-nav a:hover,
+.guide-nav a:focus-visible { color: var(--coral); }
+
+.guide-content { min-width: 0; }
+
+.guide-section {
+  margin-bottom: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2.15rem);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  box-shadow: 0 12px 34px rgba(25, 59, 58, 0.07);
+  scroll-margin-top: 1rem;
+}
+
+.guide-section h2,
+.guide-section h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--ink-strong);
+}
+
+.guide-section h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  line-height: 1.05;
+}
+
+.guide-section h3 { margin: 1.35rem 0 0.45rem; font-size: 1.32rem; }
+.guide-section p { margin: 0.55rem 0; }
+.guide-section ul,
+.guide-section ol { margin: 0.7rem 0; padding-left: 1.35rem; }
+.guide-section li + li { margin-top: 0.42rem; }
+
+.guide-steps,
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.guide-step,
+.feature-card {
+  padding: 1rem;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+}
+
+.guide-step span {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-bottom: 0.7rem;
+  color: white;
+  background: var(--teal);
+  border-radius: 50%;
+  font-weight: 900;
+}
+
+.guide-step strong,
+.feature-card strong { display: block; margin-bottom: 0.35rem; }
+.guide-step p,
+.feature-card p { margin: 0; color: var(--ink-soft); font-size: 0.93rem; }
+
+.guide-note {
+  margin: 1rem 0 0;
+  padding: 0.9rem 1rem;
+  background: var(--gold-soft);
+  border-left: 4px solid var(--gold);
+  border-radius: 0.2rem 0.75rem 0.75rem 0.2rem;
+}
+
+.guide-note--important {
+  background: #f6ddd5;
+  border-left-color: var(--coral);
+}
+
+.guide-table-wrap { overflow-x: auto; }
+
+.guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.93rem;
+}
+
+.guide-table th,
+.guide-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.guide-table th { color: var(--teal); font-size: 0.78rem; text-transform: uppercase; }
+.guide-table td:first-child { width: 3rem; font-weight: 900; }
+
+kbd,
+.guide-code {
+  padding: 0.12rem 0.4rem;
+  color: var(--ink-strong);
+  background: var(--gold-soft);
+  border: 1px solid rgba(25, 59, 58, 0.14);
+  border-radius: 0.35rem;
+  font: 700 0.9em ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.guide-footer {
+  padding: 0 0 2.5rem;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .guide-layout { grid-template-columns: 1fr; padding-top: 1rem; }
+  .guide-nav { position: static; }
+  .guide-nav a { display: inline-block; margin-right: 0.8rem; }
+  .guide-steps,
+  .feature-grid { grid-template-columns: 1fr; }
+}

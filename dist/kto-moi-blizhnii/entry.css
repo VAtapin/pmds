@@ -123,6 +123,20 @@ input {
   font-size: 0.82rem;
 }
 
+.entry-help-link {
+  display: block;
+  width: fit-content;
+  margin: 1rem auto 0;
+  color: var(--teal);
+  font-weight: 800;
+  text-underline-offset: 0.2rem;
+}
+
+.entry-help-link:hover,
+.entry-help-link:focus-visible {
+  color: var(--coral);
+}
+
 .entry-error {
   margin: 0.4rem 0 0;
   color: #9b2e21;
