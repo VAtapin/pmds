@@ -16,7 +16,8 @@
   const emptyMessage = document.querySelector('#empty-message');
   const emptyReset = document.querySelector('#empty-reset');
   const courseToggles = document.querySelectorAll('[data-course-toggle]');
-  const activeCourses = new Set([2, 3]);
+  const courses = [...new Set(questions.map((question) => question.course))].sort((a, b) => a - b);
+  const activeCourses = new Set(courses);
   let activeTag = '';
 
   const normalize = (value) => value
@@ -40,7 +41,7 @@
     return safe.replace(new RegExp(`(${escapedQuery})`, 'giu'), '<mark>$1</mark>');
   };
 
-  const courseMeta = {
+  const courseMeta = data.courseMeta || {
     2: {
       title: 'Второй курс',
       description: 'Экзаменационный конспект по предоставленным вопросам и материалам.',
@@ -55,7 +56,7 @@
     }
   };
 
-  const filterGroups = [
+  const filterGroups = data.filterGroups || [
     {
       title: 'Основы догматики',
       tags: ['Богословие', 'Свойства догматов', 'Догмат и ересь', 'Формулы и термины', 'Системы', 'Возникновение догматов', 'Раскрытие догматов', 'Назначение догматов', 'Усвоение догматов', 'Догматическое развитие', 'Предание']
@@ -143,6 +144,7 @@
       <div class="answer">
         <p class="takeaway"><strong>Запомнить:</strong> ${highlight(question.takeaway, rawQuery)}</p>
         ${question.answer.split(/\n\n+/).map((paragraph) => `<p>${highlight(paragraph, rawQuery)}</p>`).join('')}
+        ${(question.sources || []).map((source) => `<p class="answer-source">Источник: ${source.url && source.url.startsWith('https://') ? `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.title)}</a>` : escapeHtml(source.title)}. ${escapeHtml(source.section || '')}</p>`).join('')}
       </div>`;
     details.addEventListener('toggle', () => {
       if (!details.open) return;
@@ -172,7 +174,7 @@
     const filtered = availableQuestions.filter((question) => matchesFilters(question, rawQuery));
     sectionsRoot.replaceChildren();
 
-    [2, 3].forEach((course) => {
+    courses.forEach((course) => {
       const courseQuestions = filtered.filter((question) => question.course === course);
       if (!courseQuestions.length) return;
       const meta = courseMeta[course];
@@ -205,10 +207,10 @@
     resultCount.textContent = filtered.length === availableQuestions.length && !rawQuery && !activeTag
       ? `Показано: ${filtered.length} ${pluralize(filtered.length)}`
       : `Найдено: ${filtered.length} из ${availableQuestions.length}`;
-    resetButton.hidden = !rawQuery && !activeTag && activeCourses.size === 2;
+    resetButton.hidden = !rawQuery && !activeTag && activeCourses.size === courses.length;
     emptyMessage.textContent = activeCourses.size
       ? 'По этому запросу ничего не найдено.'
-      : 'Выберите 2 или 3 курс выше.';
+      : 'Выберите учебный блок выше.';
     emptyState.hidden = filtered.length > 0;
     sectionsRoot.hidden = filtered.length === 0;
   };
@@ -225,8 +227,7 @@
   const reset = () => {
     activeTag = '';
     activeCourses.clear();
-    activeCourses.add(2);
-    activeCourses.add(3);
+    courses.forEach((course) => activeCourses.add(course));
     searchInput.value = '';
     render();
     searchInput.focus();
@@ -262,7 +263,8 @@
   });
 
   document.querySelector('#total-count').textContent = questions.length;
-  document.querySelector('#jump-count-2').textContent = questions.filter((question) => question.course === 2).length;
-  document.querySelector('#jump-count-3').textContent = questions.filter((question) => question.course === 3).length;
+  courses.forEach((course) => {
+    document.querySelector(`#jump-count-${course}`).textContent = questions.filter((question) => question.course === course).length;
+  });
   render();
 })();

@@ -126,6 +126,10 @@ h1 {
   font-weight: 600;
 }
 
+.subject-card + .subject-card {
+  margin-top: 1rem;
+}
+
 .subject-card {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;

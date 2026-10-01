@@ -659,6 +659,17 @@ footer p {
   }
 }
 
+.answer-source {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.answer-source a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
