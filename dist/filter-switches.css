@@ -1,0 +1,47 @@
+/* Shared on/off appearance only for study-year controls. */
+.course-jumps button[data-course-toggle][aria-pressed] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+  color: #8b2632;
+  background: #fff1f2;
+  border-color: #e5a5ae;
+  opacity: 1;
+  text-align: left;
+  white-space: normal;
+  --switch-color: #b73848;
+  --switch-position: 9px;
+}
+
+.course-jumps button[data-course-toggle][aria-pressed]::before {
+  content: '';
+  display: block;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: radial-gradient(circle at var(--switch-position) 9px, white 0 6px, transparent 6.5px), var(--switch-color);
+}
+
+.course-jumps button[data-course-toggle][aria-pressed="true"] {
+  color: #175335;
+  background: #e9f7ee;
+  border-color: #73ad89;
+  --switch-color: #237b48;
+  --switch-position: 23px;
+}
+
+.course-jumps button[data-course-toggle][aria-pressed] span {
+  color: inherit;
+  opacity: 1;
+}
+
+.course-jumps button[data-course-toggle][aria-pressed]:focus-visible {
+  outline: 2px solid #17233c;
+  outline-offset: 3px;
+}
+
+.course-jumps {
+  flex-wrap: wrap;
+}

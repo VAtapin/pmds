@@ -51,3 +51,16 @@ node --check dist/nravstvennoe-bogoslovie/questions.js
 ## Публикация
 
 Скопируйте содержимое `dist` в каталог сайта на сервере. Новая страница использует общие `dogmatika/app.js` и `dogmatika/styles.css`, поэтому обновлять нужно также эти файлы и главную страницу с `hub.css`. Node.js используется только для локальной сборки данных и просмотра; серверный npm build и установка зависимостей не нужны. Настроенного Git remote в локальном проекте нет; пользователь публикует файлы вручную.
+
+## Сравнительное богословие
+
+94 вопроса двух годов обучения (3 и 4 курс) размещены в dist/sravnitelnoe-bogoslovie/. Материалы: content/comparative-theology-questions.json. Проверки: node --test --test-isolation=none tests/comparative-theology-content.test.mjs.
+
+Повторный импорт сравнительного богословия (оба DOCX с ответами и программа для сверки):
+
+```powershell
+./scripts/extract-comparative-theology-docx.ps1 -FirstYearPath "C:/Users/atapi/Downloads/course1_comparative_theology.docx" -SecondYearPath "C:/Users/atapi/Downloads/course2.docx" -CurriculumPath "C:/Users/atapi/Downloads/Порівняльне богослов'я.docx"
+./scripts/build-comparative-theology-static-site.ps1
+```
+
+Вопросы, памятки, ответы и повторение сохраняются дословно. Программа содержит темы 1–12 первого года и 13–19 второго. Сверка по темам и нераскрытые подпункты доступны на странице; присутствие темы не означает полное покрытие программы.

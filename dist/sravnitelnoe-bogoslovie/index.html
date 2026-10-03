@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Вопросы и ответы по сравнительному богословию для двух годов обучения (3 и 4 курс) с быстрым поиском и темами.">
+  <meta name="theme-color" content="#17233c">
+  <title>Сравнительное богословие — 3 и 4 курс</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317233c'/%3E%3Cpath d='M13 18c8-3 14-1 19 4v29c-5-5-11-7-19-4V18Zm38 0c-8-3-14-1-19 4v29c5-5 11-7 19-4V18Z' fill='none' stroke='%23f2c15f' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M32 22v29' stroke='%23f2c15f' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../filter-switches.css">
+</head>
+<body>
+  <a class="skip-link" href="#questions">К списку вопросов</a>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <div class="masthead__row">
+        <div class="masthead__title">
+          <a class="home-link" href="../">Все предметы</a>
+          <h1>Сравнительное богословие</h1>
+        </div>
+        <div class="summary" aria-label="Количество материалов">
+          <strong id="total-count">94</strong>
+          <span>вопросов с ответами</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="questions">
+    <section class="finder" aria-label="Поиск и фильтры">
+      <div class="finder__inner">
+        <label class="search" for="search-input">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+          <input id="search-input" type="search" autocomplete="off" placeholder="Найти тему, термин или фразу в ответе…">
+          <kbd>/</kbd>
+        </label>
+
+        <div class="quick-row">
+          <div class="course-jumps" role="group" aria-label="Курсы для показа">
+            <button type="button" data-course-toggle="3" aria-pressed="true">1 год · 3 курс <span id="jump-count-3">48</span></button>
+            <button type="button" data-course-toggle="4" aria-pressed="true">2 год · 4 курс <span id="jump-count-4">46</span></button>
+          </div>
+          <button class="reset-button" id="reset-button" type="button" hidden>Сбросить фильтры</button>
+          <p class="result-count" id="result-count" aria-live="polite">Показаны все 94 вопроса</p>
+        </div>
+
+        <div class="tag-block">
+          <div class="tag-cloud" id="tag-cloud" aria-label="Фильтр по темам"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-shell">
+      <div id="course-sections"></div>
+      <details class="course-supplement" id="curriculum-check"><summary>Сверка с учебной программой</summary><div class="answer" id="curriculum-content"></div></details>
+      <section class="empty-state" id="empty-state" hidden>
+        <p id="empty-message">По этому запросу ничего не найдено.</p>
+        <button type="button" id="empty-reset">Показать все вопросы</button>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>Нажмите на вопрос, чтобы открыть ответ.</p>
+  </footer>
+
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
