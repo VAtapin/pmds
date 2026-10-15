@@ -64,3 +64,18 @@ node --check dist/nravstvennoe-bogoslovie/questions.js
 ```
 
 Вопросы, памятки, ответы и повторение сохраняются дословно. Программа содержит темы 1–12 первого года и 13–19 второго. Сверка по темам и нераскрытые подпункты доступны на странице; присутствие темы не означает полное покрытие программы.
+
+## Новые религиозные движения — подготовка к беседе
+
+`dist/religioznye-dvizheniya/`: 55 основных вопросов нового документа и все 35 прежних вопросов как тематические дополнения и повторение. Тексты обоих конспектов сохранены без изменений. Хронология и примечания нового DOCX перенесены полностью. Ориентир на беседу и два учебника добавлены по уточнению преподавателя, переданному пользователем.
+
+Предыдущая подборка хранится в `content/religious-movements-previous.json`; импорт нового DOCX автоматически связывает её с новыми темами.
+
+```powershell
+./scripts/extract-religious-movements-docx.ps1 -DocumentPath "C:/Users/atapi/Downloads/Novye_religioznye_dvizheniya_55_voprosov.docx"
+./scripts/build-religious-movements-static-site.ps1
+./scripts/extract-religious-movements-docx.ps1 -DocumentPath "C:/Users/atapi/Downloads/Novye_religioznye_dvizheniya_55_voprosov.docx" -VerifyOnly
+node --test --test-isolation=none tests/religious-movements-content.test.mjs
+```
+
+Для ручной публикации заменить `dist/religioznye-dvizheniya/` и обновить `dist/index.html`. Серверный npm build не требуется.

@@ -126,6 +126,12 @@
     });
   };
 
+  const previousByNumber = new Map(data.previousMaterial.questions.map((question) => [question.number, question]));
+  const previousQuestion = (question, rawQuery = '') => `<details class="previous-question">
+    <summary>Из прежнего конспекта · №${question.number}. ${highlight(question.question, rawQuery)}</summary>
+    <p class="takeaway"><strong>Что запомнить:</strong> ${highlight(question.takeaway, rawQuery)}</p>
+    ${question.answer.split(/\n\n+/).map((text) => `<p>${highlight(text, rawQuery)}</p>`).join('')}</details>`;
+
   const buildCard = (question, rawQuery) => {
     const details = document.createElement('details');
     const answerMatch = rawQuery && !normalize(question.question).includes(normalize(rawQuery));
@@ -142,8 +148,10 @@
         <span class="chevron" aria-hidden="true"></span>
       </summary>
       <div class="answer">
-        <div class="takeaway"><strong>Что запомнить:</strong><ul>${question.takeaway.split(/\n+/).map(point => `<li>${highlight(point, rawQuery)}</li>`).join('')}</ul></div>
+        <div class="takeaway"><strong>${escapeHtml(data.answerLabels.short)}.</strong><ul>${question.takeaway.split(/\n+/).map(point => `<li>${highlight(point, rawQuery)}</li>`).join('')}</ul></div>
+        <h3>${escapeHtml(data.answerLabels.expanded)}.</h3>
         ${question.answer.split(/\n\n+/).map((paragraph) => `<p>${highlight(paragraph, rawQuery)}</p>`).join('')}
+        ${question.previousQuestionNumbers.length ? `<section class="previous-additions"><h3>Дополнительно по этой теме</h3>${question.previousQuestionNumbers.map((number) => previousQuestion(previousByNumber.get(number), rawQuery)).join('')}</section>` : ''}
         ${(question.sources || []).map((source) => `<p class="answer-source">Источник: ${source.url && source.url.startsWith('https://') ? `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.title)}</a>` : escapeHtml(source.title)}. ${escapeHtml(source.section || '')}</p>`).join('')}
       </div>`;
     details.addEventListener('toggle', () => {
@@ -152,6 +160,12 @@
         if (card !== details) card.open = false;
       });
     });
+    if (rawQuery) {
+      const query = normalize(rawQuery);
+      details.querySelectorAll('.previous-question').forEach((extra) => {
+        if (normalize(extra.textContent).includes(query)) extra.open = true;
+      });
+    }
     return details;
   };
 
@@ -162,7 +176,8 @@
       question.question,
       question.answer,
       question.takeaway,
-      ...question.tags
+      ...question.tags,
+      ...question.previousQuestionNumbers.map((number) => { const old = previousByNumber.get(number); return `${old.question} ${old.takeaway} ${old.answer}`; })
     ].join(' '));
     return haystack.includes(normalize(query));
   };
@@ -194,7 +209,23 @@
         </header>
         <div class="question-grid"></div>`;
       const grid = section.querySelector('.question-grid');
-      courseQuestions.forEach((question) => grid.append(buildCard(question, rawQuery)));
+      let previousSection = '';
+      courseQuestions.forEach((question) => {
+        if (question.section !== previousSection) {
+          const heading = document.createElement('h3');
+          heading.className = 'source-section-heading';
+          heading.textContent = question.section;
+          grid.append(heading);
+          data.sectionNotes.filter((note) => note.section === question.section).forEach((note) => {
+            const paragraph = document.createElement('p');
+            paragraph.className = 'source-section-note';
+            paragraph.textContent = note.text;
+            grid.append(paragraph);
+          });
+          previousSection = question.section;
+        }
+        grid.append(buildCard(question, rawQuery));
+      });
       sectionsRoot.append(section);
     });
 
@@ -241,7 +272,7 @@
     searchInput.focus();
   };
 
-  const updateFilters = () => render();
+  const updateFilters = () => render({ revealSingle: Boolean(searchInput.value.trim()) });
   let debounceId;
   searchInput.addEventListener('input', () => {
     window.clearTimeout(debounceId);
@@ -274,10 +305,28 @@
   courses.forEach((course) => {
     document.querySelector(`#jump-count-${course}`).textContent = questions.filter((question) => question.course === course).length;
   });
+  const introRoot = document.querySelector('#document-introduction');
+  data.introduction.forEach((text) => {
+    const paragraph = document.createElement('p');
+    paragraph.textContent = text;
+    introRoot.append(paragraph);
+  });
+  const contentsList = document.createElement('ul');
+  data.contents.forEach((text) => {
+    const item = document.createElement('li');
+    item.textContent = text;
+    contentsList.append(item);
+  });
+  introRoot.append(contentsList);
+  const chronology = document.querySelector('#chronology');
+  chronology.innerHTML = `<h2>${escapeHtml(data.chronologyHeading)}</h2><div class="chronology-table"><table>
+    <thead><tr>${data.chronology[0].map((text) => `<th scope="col">${escapeHtml(text)}</th>`).join('')}</tr></thead>
+    <tbody>${data.chronology.slice(1).map((row) => `<tr>${row.map((text) => `<td>${escapeHtml(text)}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table></div>`;
   document.querySelector('#source-note').textContent = data.sourceNote;
   const reviewRoot = document.querySelector('#quick-review');
   const reviewHeading = document.createElement('h2');
-  reviewHeading.textContent = 'Что выучить в первую очередь';
+  reviewHeading.textContent = data.reviewHeading;
   const reviewList = document.createElement('ul');
   data.review.forEach((text) => {
     const item = document.createElement('li');
@@ -287,7 +336,7 @@
   reviewRoot.append(reviewHeading, reviewList);
   const sourcesRoot = document.querySelector('#document-sources');
   const sourceHeading = document.createElement('h2');
-  sourceHeading.textContent = 'Основные источники для проверки';
+  sourceHeading.textContent = data.sourcesHeading;
   sourcesRoot.append(sourceHeading);
   data.sourceParagraphs.forEach((text) => {
     const paragraph = document.createElement('p');
@@ -305,5 +354,12 @@
     }
     sourcesRoot.append(paragraph);
   });
+  const previousRoot = document.querySelector('#previous-review');
+  previousRoot.innerHTML = `<h2>Повторение из прежнего конспекта</h2>
+    <p>${escapeHtml(data.previousMaterial.sourceNote)}</p>
+    ${data.previousReviewQuestionNumbers.map((number) => previousQuestion(previousByNumber.get(number))).join('')}
+    <details><summary>Памятка и источники прежнего конспекта</summary>
+    <h3>Что выучить в первую очередь</h3><ul>${data.previousMaterial.review.map((text) => `<li>${escapeHtml(text)}</li>`).join('')}</ul>
+    <h3>Основные источники для проверки</h3>${data.previousMaterial.sourceParagraphs.map((text) => `<p>${escapeHtml(text)}</p>`).join('')}</details>`;
   render();
 })();

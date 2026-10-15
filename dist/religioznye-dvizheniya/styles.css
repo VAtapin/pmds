@@ -1295,3 +1295,21 @@ footer p {
 
 #source-note, #quick-review { overflow-wrap: anywhere; }
 #quick-review li + li { margin-top: 0.6rem; }
+
+.exam-context, .source-introduction { padding: 1.25rem; background: #fff; border: 1px solid var(--line); border-radius: 1rem; }
+.exam-context h2, #chronology h2 { margin-top: 0; }
+.source-introduction summary { cursor: pointer; font-weight: 700; }
+.source-section-heading, .source-section-note { grid-column: 1 / -1; }
+.source-section-heading { margin: 1.5rem 0 .25rem; font-size: 1.2rem; }
+.source-section-note { margin: 0 0 .5rem; color: var(--ink-soft); }
+.chronology-table { overflow-x: auto; }
+#chronology table { width: 100%; border-collapse: collapse; background: #fff; }
+#chronology th, #chronology td { text-align: left; vertical-align: top; padding: .75rem; border-bottom: 1px solid var(--line); }
+#chronology th { background: #eef0ff; }
+
+.previous-additions { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.previous-question { padding: .8rem; margin: .75rem 0; border: 1px solid var(--line); border-radius: .6rem; overflow-wrap: anywhere; }
+.previous-question summary, #previous-review summary { cursor: pointer; font-weight: 600; }
+.previous-question summary { display: block; }
+.previous-question summary::before { content: '+ '; }
+.previous-question[open] > summary::before { content: '− '; }
