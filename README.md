@@ -22,11 +22,13 @@
 - `dist/religii/` — справочник по теории и истории нехристианских религий;
 - `dist/katehizis/` — справочник по Катехизису Православной Церкви;
 - `dist/novyi-zavet/` — справочник по обзору Нового Завета;
+- `dist/sakralnoe-iskusstvo/` — подготовка к зачёту по церковному искусству: 10 вопросов, подробный конспект лекции и разбор Синайского Пантократора;
 - `dist/sravnitelnoe-bogoslovie/` — справочник по сравнительному богословию;
 - `content/questions.json` — извлечённые вопросы, ответы и результат сверки;
 - `content/religions-questions.json` — материалы по нехристианским религиям;
 - `content/catechism-questions.json` — материалы по Катехизису;
 - `content/new-testament-questions.json` — материалы по обзору Нового Завета;
+- `content/sacred-art-exam.json` — вопросы и конспект лекции по церковному искусству;
 - `content/comparative-theology-questions.json` — материалы по сравнительному богословию;
 - `scripts/extract-docx.ps1` — повторное извлечение материалов из DOCX;
 - `scripts/extract-religions-docx.ps1` — повторное извлечение нового предмета из DOCX;
@@ -39,6 +41,7 @@
 - `scripts/build-religions-static-site.ps1` — обновление `dist/religii/questions.js` из данных;
 - `scripts/build-catechism-static-site.ps1` — обновление `dist/katehizis/questions.js` из данных;
 - `scripts/build-new-testament-static-site.ps1` — обновление `dist/novyi-zavet/questions.js` из данных;
+- `scripts/build-sacred-art-exam.mjs` — сборка статических данных раздела церковного искусства;
 - `scripts/build-comparative-theology-static-site.ps1` — обновление `dist/sravnitelnoe-bogoslovie/questions.js` из данных;
 - `scripts/serve-static.mjs` — локальный просмотр сайта.
 

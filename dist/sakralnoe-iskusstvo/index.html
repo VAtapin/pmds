@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Подготовка к зачёту по церковному искусству: 10 вопросов, полный конспект лекции и подробный разбор Синайского Пантократора.">
+  <meta name="theme-color" content="#17233c">
+  <title>Церковное и сакральное искусство — подготовка к зачёту</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#topics">К вопросам</a>
+  <header class="masthead">
+    <div class="masthead__inner">
+      <div class="masthead__row">
+        <div class="masthead__title">
+          <a class="home-link" href="../">Все предметы</a>
+          <h1 id="page-title">Церковное и сакральное искусство</h1>
+        </div>
+        <div class="summary" aria-label="Количество вопросов">
+          <strong id="total-count">10</strong><span>вопросов к зачёту</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main id="topics">
+    <section class="intro-shell">
+      <div class="exam-banner">
+        <p class="eyebrow">Подготовка к зачёту</p>
+        <h2>Зачёт — 2 ноября 2026 года</h2>
+        <p id="exam-format"></p>
+      </div>
+      <div class="source-notes">
+        <p id="source-note"></p>
+        <p id="pending-note"></p>
+      </div>
+      <details class="exam-list" open>
+        <summary><strong>Все 10 вопросов</strong><span>официальный перечень к зачёту</span></summary>
+        <ol id="official-questions"></ol>
+      </details>
+      <div class="support-grid">
+        <details class="support-card">
+          <summary>Что сказал преподаватель о зачёте</summary>
+          <ul id="teacher-notes"></ul>
+        </details>
+        <details class="support-card">
+          <summary>Рекомендованная литература</summary>
+          <ul id="literature"></ul>
+        </details>
+      </div>
+    </section>
+    <section class="finder" aria-label="Поиск и фильтры">
+      <div class="finder__inner">
+        <label class="search" for="search-input">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+          <input id="search-input" type="search" autocomplete="off" placeholder="Найти вопрос, памятник, термин или имя…">
+          <kbd>/</kbd>
+        </label>
+        <div class="quick-row">
+          <button class="reset-button" id="reset-button" type="button" hidden>Сбросить фильтр</button>
+          <p class="result-count" id="result-count" aria-live="polite">Все вопросы</p>
+        </div>
+        <div class="tag-cloud" id="tag-cloud" aria-label="Фильтр по темам"></div>
+      </div>
+    </section>
+    <div class="content-shell">
+      <div id="question-cards"></div>
+      <section class="empty-state" id="empty-state" hidden>
+        <p>По этому запросу ничего не найдено.</p><button type="button" id="empty-reset">Показать все вопросы</button>
+      </section>
+    </div>
+  </main>
+  <footer><p>Конспект по продиктованной лекции. Интерпретации исследователей и сведения из дополнительных источников отмечены отдельно.</p></footer>
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
