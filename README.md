@@ -17,7 +17,9 @@
 
 - `dist/index.html` — главная страница со списком предметов;
 - `dist/cerkovnoe-iskusstvo/` — раздел «Церковное искусство»: 10 экзаменационных вопросов, поиск и самопроверка; `study-guide.html` содержит полный конспект лекции, 10 развёрнутых ответов и краткую шпаргалку;
+- `dist/sakralnoe-iskusstvo/` — отдельная альтернативная версия подготовки к зачёту по церковному искусству, восстановленная из коммита `cded21f`;
 - `content/cerkovnoe-iskusstvo-study-guide.md` — исходный Markdown полного учебного конспекта по расшифровке лекции;
+- `content/sacred-art-exam.json` — данные альтернативной версии раздела сакрального искусства;
 - `dist/dogmatika/` — справочник по догматическому богословию;
 - `dist/nravstvennoe-bogoslovie/` — 12 вопросов по лекции (темы 11–22), все пункты памяток и ответы из нового DOCX без изменения текста;
 - `dist/glg-citrix/` — подготовка к разговору GLG: 35 немецких вопросов из DOCX, 20 отметок ★ и повторение из 12 пунктов;
@@ -42,6 +44,7 @@
 - `scripts/build-religions-static-site.ps1` — обновление `dist/religii/questions.js` из данных;
 - `scripts/build-catechism-static-site.ps1` — обновление `dist/katehizis/questions.js` из данных;
 - `scripts/build-new-testament-static-site.ps1` — обновление `dist/novyi-zavet/questions.js` из данных;
+- `scripts/build-sacred-art-exam.mjs` — сборка данных альтернативного раздела церковного искусства;
 - `scripts/build-comparative-theology-static-site.ps1` — обновление `dist/sravnitelnoe-bogoslovie/questions.js` из данных;
 - `scripts/serve-static.mjs` — локальный просмотр сайта.
 
