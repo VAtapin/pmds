@@ -117,17 +117,17 @@ h1 {
 }
 
 .subjects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
   padding-top: clamp(1.5rem, 4vw, 2.5rem);
 }
 
 .subjects h2 {
-  margin: 0 0 1rem;
+  grid-column: 1 / -1;
+  margin: 0;
   font-size: 1.35rem;
   font-weight: 600;
-}
-
-.subject-card + .subject-card {
-  margin-top: 1rem;
 }
 
 .subject-card {
@@ -135,7 +135,8 @@ h1 {
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: clamp(0.85rem, 2vw, 1.4rem);
-  width: min(100%, 60rem);
+  width: 100%;
+  height: 100%;
   padding: clamp(1rem, 2.5vw, 1.5rem);
   background: var(--card);
   border: 1px solid var(--line);
@@ -144,6 +145,35 @@ h1 {
   box-shadow: 0 12px 36px rgba(23, 35, 60, 0.07);
   text-decoration: none;
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.subject-card + .subject-card {
+  margin-top: 0;
+}
+
+.subject-card--religions {
+  --subject: #8d5c22;
+  --subject-soft: #fff4df;
+}
+
+.subject-card--catechism {
+  --subject: #326b58;
+  --subject-soft: #e9f7f1;
+}
+
+.subject-card--new-testament {
+  --subject: #7b3d61;
+  --subject-soft: #faedf5;
+}
+
+.subject-card--comparative {
+  --subject: #8a3f38;
+  --subject-soft: #fcefeb;
+}
+
+.subject-card--obi {
+  --subject: #b9660c;
+  --subject-soft: #fff3df;
 }
 
 .subject-card:hover,
@@ -209,6 +239,12 @@ footer {
   color: #d3dbea;
   background: var(--ink);
   font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .subjects {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 520px) {

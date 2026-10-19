@@ -1,0 +1,263 @@
+(() => {
+  'use strict';
+
+  if (['#course-2', '#course-3'].includes(window.location.hash)) {
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+  }
+
+  const data = window.QUESTIONS_DATA;
+  const questions = data.questions;
+  const searchInput = document.querySelector('#search-input');
+  const sectionsRoot = document.querySelector('#course-sections');
+  const tagCloud = document.querySelector('#tag-cloud');
+  const resultCount = document.querySelector('#result-count');
+  const resetButton = document.querySelector('#reset-button');
+  const emptyState = document.querySelector('#empty-state');
+  const emptyMessage = document.querySelector('#empty-message');
+  const emptyReset = document.querySelector('#empty-reset');
+  const courseToggles = document.querySelectorAll('[data-course-toggle]');
+  const allCourses = [...courseToggles].map((button) => Number(button.dataset.courseToggle));
+  const activeCourses = new Set(allCourses);
+  let activeTag = '';
+
+  const normalize = (value) => value
+    .toLocaleLowerCase('ru')
+    .replaceAll('ё', 'е')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (character) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;'
+  })[character]);
+
+  const highlight = (value, query) => {
+    const safe = escapeHtml(value);
+    if (!query) return safe;
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return safe.replace(new RegExp(`(${escapedQuery})`, 'giu'), '<mark>$1</mark>');
+  };
+
+  const courseMeta = {
+    2: {
+      title: 'Второй курс',
+      description: 'Экзаменационный конспект по Катехизису Православной Церкви.',
+      color: 'var(--course-2)',
+      soft: 'var(--course-2-soft)'
+    }
+  };
+
+  const filterGroups = [
+    {
+      title: 'Вера и Откровение',
+      tags: ['Катехизис и вера', 'Богопознание и Откровение', 'Священное Предание', 'Священное Писание', 'Символ веры и Соборы', 'Исповедание веры']
+    },
+    {
+      title: 'Учение о Боге',
+      tags: ['Сущность Бога', 'Свойства Божии', 'Пресвятая Троица', 'Лица Троицы']
+    },
+    {
+      title: 'Творение и человек',
+      tags: ['Творение мира', 'Ангельский мир', 'Человек и Промысл', 'Грехопадение']
+    },
+    {
+      title: 'Христос и спасение',
+      tags: ['Христос и арианство', 'Человечество Христа', 'Две природы Христа', 'Искупление', 'Богородица', 'Воскресение Христа', 'Вознесение']
+    },
+    {
+      title: 'Святой Дух и Церковь',
+      tags: ['Святой Дух', 'Церковь Христова', 'Свойства Церкви']
+    },
+    {
+      title: 'Таинства',
+      tags: ['Крещение и Миропомазание', 'Евхаристия', 'Другие Таинства']
+    },
+    {
+      title: 'Последние судьбы',
+      tags: ['Воскресение и вечность', 'Второе Пришествие']
+    },
+    {
+      title: 'Повторение',
+      tags: ['Схема Катехизиса']
+    }
+  ];
+
+  const buildTagCloud = () => {
+    const availableTags = new Set(
+      questions
+        .filter((question) => activeCourses.has(question.course))
+        .flatMap((question) => question.tags)
+    );
+
+    if (activeTag && !availableTags.has(activeTag)) activeTag = '';
+    tagCloud.replaceChildren();
+
+    filterGroups.forEach((group) => {
+      const visibleTags = group.tags.filter((tag) => availableTags.has(tag));
+      if (!visibleTags.length) return;
+      const groupBlock = document.createElement('section');
+      groupBlock.className = 'filter-group';
+      groupBlock.innerHTML = `<h3>${group.title}</h3><div class="filter-buttons"></div>`;
+      const buttonsRoot = groupBlock.querySelector('.filter-buttons');
+
+      visibleTags.forEach((tag) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.tag = tag;
+        button.setAttribute('aria-pressed', 'false');
+        button.textContent = tag;
+        button.addEventListener('click', () => {
+          activeTag = activeTag === tag ? '' : tag;
+          updateFilters();
+        });
+        buttonsRoot.append(button);
+      });
+
+      tagCloud.append(groupBlock);
+    });
+  };
+
+  const buildCard = (question, rawQuery) => {
+    const details = document.createElement('details');
+    const answerMatch = rawQuery && !normalize(question.question).includes(normalize(rawQuery));
+    details.className = 'question-card';
+    details.dataset.id = question.id;
+    details.innerHTML = `
+      <summary>
+        <span class="question-number">${question.number}</span>
+        <span>
+          <span class="question-title">${highlight(question.question, rawQuery)}</span>
+          <span class="question-tags">${question.tags.map((tag) => `<span>#${escapeHtml(tag)}</span>`).join('')}</span>
+          ${answerMatch ? '<span class="match-note">Совпадение найдено в ответе</span>' : ''}
+        </span>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+      <div class="answer">
+        <p class="takeaway"><strong>Запомнить:</strong> ${highlight(question.takeaway, rawQuery)}</p>
+        <p class="source-map">${highlight(question.source, rawQuery)}</p>
+        ${question.answer.split(/\n\n+/).map((paragraph) => `<p>${highlight(paragraph, rawQuery)}</p>`).join('')}
+      </div>`;
+    details.addEventListener('toggle', () => {
+      if (!details.open) return;
+      document.querySelectorAll('.question-card[open]').forEach((card) => {
+        if (card !== details) card.open = false;
+      });
+    });
+    return details;
+  };
+
+  const matchesFilters = (question, query) => {
+    if (activeTag && !question.tags.includes(activeTag)) return false;
+    if (!query) return true;
+    const haystack = normalize([
+      question.question,
+      question.answer,
+      question.takeaway,
+      question.source,
+      ...question.tags
+    ].join(' '));
+    return haystack.includes(normalize(query));
+  };
+
+  const render = () => {
+    const rawQuery = searchInput.value.trim();
+    const availableQuestions = questions.filter((question) => activeCourses.has(question.course));
+    buildTagCloud();
+    const filtered = availableQuestions.filter((question) => matchesFilters(question, rawQuery));
+    sectionsRoot.replaceChildren();
+
+    allCourses.forEach((course) => {
+      const courseQuestions = filtered.filter((question) => question.course === course);
+      if (!courseQuestions.length) return;
+      const meta = courseMeta[course];
+      const section = document.createElement('section');
+      section.className = 'course-section';
+      section.id = `course-${course}`;
+      section.style.setProperty('--course-color', meta.color);
+      section.style.setProperty('--course-soft', meta.soft);
+      section.innerHTML = `
+        <header class="course-heading">
+          <span class="course-kicker">${course}</span>
+          <div>
+            <h2>${meta.title}</h2>
+            <p>${meta.description}</p>
+          </div>
+          <span class="course-visible-count">${courseQuestions.length} ${pluralize(courseQuestions.length)}</span>
+        </header>
+        <div class="question-grid"></div>`;
+      const grid = section.querySelector('.question-grid');
+      courseQuestions.forEach((question) => grid.append(buildCard(question, rawQuery)));
+      sectionsRoot.append(section);
+    });
+
+    document.querySelectorAll('[data-tag]').forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.tag === activeTag));
+    });
+    courseToggles.forEach((button) => {
+      button.setAttribute('aria-pressed', String(activeCourses.has(Number(button.dataset.courseToggle))));
+    });
+    resultCount.textContent = filtered.length === availableQuestions.length && !rawQuery && !activeTag
+      ? `Показано: ${filtered.length} ${pluralize(filtered.length)}`
+      : `Найдено: ${filtered.length} из ${availableQuestions.length}`;
+    resetButton.hidden = !rawQuery && !activeTag && activeCourses.size === allCourses.length;
+    emptyMessage.textContent = activeCourses.size
+      ? 'По этому запросу ничего не найдено.'
+      : 'Включите курс выше.';
+    emptyState.hidden = filtered.length > 0;
+    sectionsRoot.hidden = filtered.length === 0;
+  };
+
+  const pluralize = (count) => {
+    const lastTwo = count % 100;
+    const last = count % 10;
+    if (lastTwo >= 11 && lastTwo <= 14) return 'вопросов';
+    if (last === 1) return 'вопрос';
+    if (last >= 2 && last <= 4) return 'вопроса';
+    return 'вопросов';
+  };
+
+  const reset = () => {
+    activeTag = '';
+    activeCourses.clear();
+    allCourses.forEach((course) => activeCourses.add(course));
+    searchInput.value = '';
+    render();
+    searchInput.focus();
+  };
+
+  const updateFilters = () => render();
+  let debounceId;
+  searchInput.addEventListener('input', () => {
+    window.clearTimeout(debounceId);
+    debounceId = window.setTimeout(updateFilters, 60);
+  });
+  courseToggles.forEach((button) => {
+    button.addEventListener('click', () => {
+      const course = Number(button.dataset.courseToggle);
+      if (activeCourses.has(course)) {
+        activeCourses.delete(course);
+      } else {
+        activeCourses.add(course);
+      }
+      updateFilters();
+    });
+  });
+  resetButton.addEventListener('click', reset);
+  emptyReset.addEventListener('click', reset);
+  document.addEventListener('keydown', (event) => {
+    if (event.key === '/' && document.activeElement !== searchInput) {
+      event.preventDefault();
+      searchInput.focus();
+    }
+    if (event.key === 'Escape' && document.activeElement === searchInput) {
+      reset();
+    }
+  });
+
+  document.querySelector('#total-count').textContent = questions.length;
+  document.querySelector('#jump-count-2').textContent = questions.filter((question) => question.course === 2).length;
+  render();
+})();

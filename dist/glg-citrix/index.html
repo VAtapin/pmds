@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GLG Citrix: 35 Fragen mit Merksätzen und ausführlicheren Antworten für das Vorstellungsgespräch.">
+  <meta name="theme-color" content="#17233c">
+  <title>GLG Citrix – Gesprächsvorbereitung</title>
+  <link rel="stylesheet" href="../religii/styles.css">
+  <link rel="stylesheet" href="../obi-kuechenplaner/styles.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#questions">Zu den Fragen</a>
+  <header class="masthead">
+    <div class="masthead__inner">
+      <div class="masthead__row">
+        <div class="masthead__title">
+          <a class="home-link" href="../">Alle Themen</a>
+          <h1>GLG Citrix Gespräch</h1>
+        </div>
+        <div class="summary" aria-label="Anzahl der Fragen">
+          <strong id="total-count">35</strong><span>Fragen mit Antworten</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main id="questions">
+    <section class="finder" aria-label="Suche und Filter">
+      <div class="finder__inner">
+        <label class="search" for="search-input">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+          <input id="search-input" type="search" autocomplete="off" placeholder="Thema, Begriff oder Formulierung suchen…">
+          <kbd>/</kbd>
+        </label>
+        <div class="quick-row">
+          <span class="prep-label">Vorstellungsgespräch</span>
+          <button class="reset-button" id="reset-button" type="button" hidden>Filter zurücksetzen</button>
+          <p class="result-count" id="result-count" aria-live="polite">Alle 35 Fragen</p>
+        </div>
+        <div class="tag-block"><div class="tag-cloud" id="tag-cloud" aria-label="Nach Themen filtern"></div></div>
+      </div>
+    </section>
+    <div class="prep-shell">
+      <p class="prep-intro" id="learning-strategy"></p>
+      <section class="prep-focus" aria-labelledby="focus-title">
+        <div>
+          <p class="prep-focus__date">Montag, 5. Oktober 2026</p>
+          <h2 id="focus-title">GLG – Systemadministrator/in Citrix</h2>
+        </div>
+        <p>Frage → Was muss ich mir merken? → Etwas ausführlicher</p>
+      </section>
+      <div class="prep-tools">
+        <details class="prep-tool">
+          <summary><span>Kurz vor dem Gespräch – diese 12 Antworten müssen sitzen</span><span class="chevron" aria-hidden="true"></span></summary>
+          <div class="prep-tool__content"><ol id="quick-review"></ol></div>
+        </details>
+        <details class="prep-tool">
+          <summary><span>Wichtig für das Gespräch</span><span class="chevron" aria-hidden="true"></span></summary>
+          <div class="prep-tool__content"><p id="conversation-note"></p></div>
+        </details>
+      </div>
+    </div>
+    <div class="content-shell">
+      <div id="question-sections"></div>
+      <section class="empty-state" id="empty-state" hidden>
+        <p>Keine passenden Fragen gefunden.</p><button type="button" id="empty-reset">Alle Fragen anzeigen</button>
+      </section>
+    </div>
+  </main>
+  <footer><p>Fragen, Merksätze und Antworten aus GLG_Citrix_Fragen.docx. ★ kennzeichnet die im Dokument besonders wichtigen Fragen.</p></footer>
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
