@@ -35,12 +35,12 @@ test('Filters cover every question and exclude the other year when toggled', () 
   }
 });
 
-test('All seven guides use the shared switch styles and old moral lectures are removed', () => {
+test('All six guides use the shared switch styles and old moral lectures are removed', () => {
   const switchStyles = readFileSync(new URL('../dist/filter-switches.css',import.meta.url),'utf8');
   assert.ok(switchStyles.includes('button[data-course-toggle][aria-pressed]::before'));
   assert.ok(!switchStyles.includes('.tag-cloud'));
   assert.ok(!switchStyles.includes('.discipline-toggles'));
-  for (const page of ['dogmatika','religii','katehizis','novyi-zavet','sravnitelnoe-bogoslovie','obi-kuechenplaner','nravstvennoe-bogoslovie']) {
+  for (const page of ['dogmatika','religii','katehizis','novyi-zavet','sravnitelnoe-bogoslovie','nravstvennoe-bogoslovie']) {
     const html = readFileSync(new URL(`../dist/${page}/index.html`,import.meta.url),'utf8');
     assert.ok(html.includes('href="../filter-switches.css"'),page);
   }

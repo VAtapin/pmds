@@ -171,11 +171,6 @@ h1 {
   --subject-soft: #fcefeb;
 }
 
-.subject-card--obi {
-  --subject: #b9660c;
-  --subject-soft: #fff3df;
-}
-
 .subject-card:hover,
 .subject-card:focus-visible {
   border-color: #9ca8bd;
