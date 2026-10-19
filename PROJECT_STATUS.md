@@ -22,6 +22,6 @@
 
 - Сверить раздел с обещанными преподавателем вопросами, литературой, презентацией и ссылками.
 
-## Последний commit до текущей задачи
+## Последний связанный commit
 
-- `2037b05` — `Commit all current project files`, ветка `main`.
+- `2a4da80` — `Use complete church art study guide`, ветка `main`.
