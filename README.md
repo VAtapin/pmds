@@ -26,11 +26,13 @@
 - `dist/katehizis/` — справочник по Катехизису Православной Церкви;
 - `dist/novyi-zavet/` — справочник по обзору Нового Завета;
 - `dist/sravnitelnoe-bogoslovie/` — справочник по сравнительному богословию;
+- `dist/sravnitelnoe-bogoslovie-3-kurs/` — отдельная подготовка к экзамену по сравнительному богословию для 3 курса (16 вопросов);
 - `content/questions.json` — извлечённые вопросы, ответы и результат сверки;
 - `content/religions-questions.json` — материалы по нехристианским религиям;
 - `content/catechism-questions.json` — материалы по Катехизису;
 - `content/new-testament-questions.json` — материалы по обзору Нового Завета;
 - `content/comparative-theology-questions.json` — материалы по сравнительному богословию;
+- `content/comparative-theology-3-course.json` — отдельные 16 экзаменационных вопросов и ответы для 3 курса;
 - `scripts/extract-docx.ps1` — повторное извлечение материалов из DOCX;
 - `scripts/extract-religions-docx.ps1` — повторное извлечение нового предмета из DOCX;
 - `scripts/extract-catechism-docx.ps1` — повторное извлечение Катехизиса из DOCX;
@@ -43,6 +45,7 @@
 - `scripts/build-new-testament-static-site.ps1` — обновление `dist/novyi-zavet/questions.js` из данных;
 - `scripts/build-church-art-exam.mjs` — сборка данных единого раздела церковного искусства;
 - `scripts/build-comparative-theology-static-site.ps1` — обновление `dist/sravnitelnoe-bogoslovie/questions.js` из данных;
+- `scripts/build-comparative-theology-3-course.ps1` — сборка данных отдельной страницы сравнительного богословия для 3 курса;
 - `scripts/serve-static.mjs` — локальный просмотр сайта.
 
 ## Локальный просмотр
@@ -64,6 +67,8 @@ node .\scripts\serve-static.mjs 8765
 Обзор Нового Завета: `http://127.0.0.1:8765/novyi-zavet/`.
 
 Сравнительное богословие: `http://127.0.0.1:8765/sravnitelnoe-bogoslovie/`.
+
+Сравнительное богословие, 3 курс: `http://127.0.0.1:8765/sravnitelnoe-bogoslovie-3-kurs/`.
 
 Повторный импорт сравнительного богословия (оба DOCX с ответами и программа для сверки):
 

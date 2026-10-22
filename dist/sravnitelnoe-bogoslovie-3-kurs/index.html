@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Подготовка к экзамену по сравнительному богословию для 3 курса: 16 вопросов, поиск по ответам и темы.">
+  <meta name="theme-color" content="#17233c">
+  <title>Сравнительное богословие — 3 курс</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#question-list">К вопросам</a>
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a class="home-link" href="../">Все предметы</a>
+      <div class="title-row">
+        <div><p class="eyebrow">Подготовка к экзамену · 3 курс</p><h1>Сравнительное богословие</h1></div>
+        <div class="summary"><strong id="total-count">16</strong><span>вопросов</span></div>
+      </div>
+      <p class="intro">Формулировки взяты из отдельного списка вопросов для третьего курса. Ответы составлены по лекциям протоиерея Валентина Васечко и дополнительным материалам о папском примате и Filioque.</p>
+      <a class="other-course" href="../sravnitelnoe-bogoslovie/">Открыть отдельный справочник: 3 и 4 курс · 94 вопроса →</a>
+    </div>
+  </header>
+  <main id="question-list">
+    <section class="finder" aria-label="Поиск и фильтры">
+      <label class="search" for="search-input"><span aria-hidden="true">⌕</span><input id="search-input" type="search" autocomplete="off" placeholder="Найти вопрос, термин или фразу в ответе…"><kbd>/</kbd></label>
+      <div class="quick-row"><button class="reset-button" id="reset-button" type="button" hidden>Сбросить фильтр</button><p id="result-count" aria-live="polite">Показаны все 16 вопросов</p></div>
+      <div class="tag-cloud" id="tag-cloud" aria-label="Фильтр по темам"></div>
+    </section>
+    <section class="content-shell"><div id="questions"></div><div class="empty-state" id="empty-state" hidden><p>По этому запросу ничего не найдено.</p><button id="empty-reset" type="button">Показать все вопросы</button></div>
+      <details class="sources"><summary>Материалы, по которым подготовлен раздел</summary><ul id="sources-list"></ul></details>
+    </section>
+  </main>
+  <footer>Открой карточку, чтобы увидеть развернутый ответ и краткий тезис для повторения.</footer>
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
