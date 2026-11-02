@@ -268,3 +268,6 @@ footer {
     transition-duration: 0.01ms !important;
   }
 }
+
+.subject-card--passed { border-left: 6px solid #269654; }
+.subject-status { font-size: .8rem; color: #42644f; }
