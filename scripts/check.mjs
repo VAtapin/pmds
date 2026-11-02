@@ -25,7 +25,7 @@ for(const subject of subjects){
 const history=data.documents.find(d=>d.id==='church-history-study');
 assert(history&&history.access==='student','History study text is published');
 assert.equal(history.sourceOriginalId,'document-11');
-assert.equal(history.sections.length,14);
+assert.equal(history.sections.length,21);
 assert.deepEqual([...new Set(history.sections.flatMap(s=>s.sourceTopics))].sort((a,b)=>a-b),Array.from({length:39},(_,i)=>i+1),'All 39 history topics covered');
 assert(!/Что запомнить|Коротко важное|class="key-point"|<summary/i.test(history.html),'History is a continuous study text');
 const historyPage=readFileSync(join(dist,'documents/church-history-study.html'),'utf8');
@@ -35,6 +35,22 @@ assert.equal(data.documents.find(d=>d.id==='document-11').access,'author-archive
 const historySubject=subjects.find(s=>s.course===4&&s.slug==='istoriya-cerkvi');
 assert(historySubject.documents.some(d=>d.id===history.id),'Study text linked from subject');
 assert.equal(historySubject.teacherAssignments.length,0,'No invented teacher assignments');
+const programme=data.documents.find(d=>d.id==='church-history-program-4');
+assert.equal(programme.programTopics.length,10);
+assert.equal(history.programSourceId,programme.id);
+assert.deepEqual(history.programCoverage.map(p=>p.topic),Array.from({length:10},(_,i)=>i+1));
+for(const entry of history.programCoverage)for(const id of entry.sections)assert(history.sections.some(s=>s.id===id),'Programme mapping resolves to a real chapter');
+assert(history.html.includes('Львовское собрание 1946'));
+assert(history.html.includes('Директория УНР'));
+assert(history.html.includes('не даёт основания'),'Ambiguous 2008 programme reference remains explicit');
+for(const [course,slug,id] of [[3,'dogmatika','dogmatika-third-questions'],[3,'metodika-prepodavaniya','methodology-lecture-audio'],[3,'vethii-zavet','old-testament-program-3'],[4,'vethii-zavet','old-testament-program-4'],[3,'novyi-zavet','new-testament-program-3'],[4,'novyi-zavet','new-testament-program-4'],[4,'nravstvennoe-bogoslovie','moral-program-4'],[3,'istoriya-pravoslaviya','church-history-program-3'],[4,'istoriya-cerkvi','church-history-program-4']]){
+ const subject=subjects.find(s=>s.course===course&&s.slug===slug),doc=data.documents.find(d=>d.id===id);
+ assert(doc&&doc.access==='student');assert(subject.documents.some(d=>d.id===id),'Found source attached to correct subject');
+ if(doc.sourceOriginalId)assert(data.documents.some(d=>d.id===doc.sourceOriginalId&&d.access==='author-archive'));
+}
+const dogmaQuestions=data.documents.find(d=>d.id==='dogmatika-third-questions');
+assert.equal((dogmaQuestions.html.match(/<p>/g)||[]).length,39,'Title plus 38 supplied questions');
+assert(readFileSync(join(dist,'4-kurs/istoriya-cerkvi/index.html'),'utf8').includes('church-history-study.html'));
 const methodology=subjects.find(s=>s.course===3&&s.slug==='metodika-prepodavaniya');
 assert.equal(methodology.lessons.length,12);assert.equal(methodology.teacherAssignments.length,9);
 const transcript=data.documents.find(d=>d.id==='metodika-lecture-2026-09-23');

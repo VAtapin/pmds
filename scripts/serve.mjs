@@ -4,7 +4,7 @@ import {resolve,dirname,join,extname,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../dist');
 const port=Number(process.argv[2]||8767);
-const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.txt':'text/plain; charset=utf-8','.pdf':'application/pdf','.mp3':'audio/mpeg','.docx':'application/vnd.openxmlformats-officedocument.wordprocessingml.document','.doc':'application/msword'};
+const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.txt':'text/plain; charset=utf-8','.pdf':'application/pdf','.mp3':'audio/mpeg','.m4a':'audio/mp4','.docx':'application/vnd.openxmlformats-officedocument.wordprocessingml.document','.doc':'application/msword'};
 createServer((req,res)=>{
  try{
   let path=resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
