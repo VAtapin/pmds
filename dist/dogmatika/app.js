@@ -16,7 +16,13 @@
   const emptyMessage = document.querySelector('#empty-message');
   const emptyReset = document.querySelector('#empty-reset');
   const courseToggles = document.querySelectorAll('[data-course-toggle]');
-  const activeCourses = new Set([2, 3]);
+  const requestedCourse = Number(new URLSearchParams(window.location.search).get("course"));
+  const initialCourses = [2, 3].includes(requestedCourse) ? [requestedCourse] : [2, 3];
+  const activeCourses = new Set(initialCourses);
+  if (initialCourses.length === 1) {
+    const home = document.querySelector(".home-link");
+    if(home) { home.href = "../"+requestedCourse+"-kurs/"; home.textContent = "← Предметы "+requestedCourse+" курса"; }
+  }
   let activeTag = '';
 
   const normalize = (value) => value
@@ -225,8 +231,7 @@
   const reset = () => {
     activeTag = '';
     activeCourses.clear();
-    activeCourses.add(2);
-    activeCourses.add(3);
+    initialCourses.forEach((course) => activeCourses.add(course));
     searchInput.value = '';
     render();
     searchInput.focus();

@@ -8,7 +8,7 @@ test('Patrology has all 51 source prompts across ten answered sections',()=>{
  assert.equal(d.questions.reduce((n,q)=>n+(q.answer.match(/<li>/g)||[]).length,0),51);
  const ctx={window:{}};vm.runInNewContext(fs.readFileSync('dist/patrologiya/questions.js','utf8'),ctx);
  assert.equal(JSON.stringify(ctx.window.PATROLOGY_DATA),JSON.stringify(d));
- assert.match(fs.readFileSync('dist/index.html','utf8'),/href="patrologiya\/"/);
+ assert.match(fs.readFileSync('dist/3-kurs/index.html','utf8'),/href="\.\.\/patrologiya\/"/);
 });
 test('Schedule marks past assessments and preserves separate course status',()=>{
  const cards=['patrologiya/','sravnitelnoe-bogoslovie/','sravnitelnoe-bogoslovie-3-kurs/','istoriya-russkoi-cerkvi/'].map(href=>({href,classes:[],labels:[],getAttribute(){return href},classList:{add(c){this.owner.classes.push(c)}},querySelector(){return {append:l=>this.labels.push(l.textContent)}}}));
