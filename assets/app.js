@@ -1,5 +1,18 @@
 (() => {
  'use strict';
+ const dateKey=value=>{const m=String(value).match(/(\d{2})\.(\d{2})\.(\d{4})/);return m?`${m[3]}-${m[2]}-${m[1]}`:null;};
+ function refreshSchedule(){
+  const now=new Date(),today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  document.querySelectorAll('[data-card]').forEach(card=>{
+   const lecture=dateKey(card.dataset.lecture),assessment=dateKey(card.dataset.assessment);
+   const state=assessment&&assessment<today?'finished':lecture&&lecture<=today?'started':lecture?'upcoming':'unknown';
+   card.dataset.scheduleState=state;
+   card.querySelector('[data-schedule-status]').textContent={finished:'Дата контроля прошла',started:'Лекция состоялась',upcoming:'Лекция впереди',unknown:'Дата лекции не указана'}[state];
+  });
+ }
+ refreshSchedule();
+ setInterval(refreshSchedule,60000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshSchedule()});
  const normalize=x=>String(x).toLocaleLowerCase('ru').replaceAll('ё','е').replace(/\s+/g,' ').trim();
  const catalog=document.querySelector('[data-catalog-search]');
  if(catalog)catalog.addEventListener('input',()=>{const query=normalize(catalog.value);let count=0;document.querySelectorAll('[data-card]').forEach(card=>{card.hidden=!normalize(card.dataset.search).includes(query);if(!card.hidden)count++});document.querySelector('[data-catalog-empty]').hidden=count>0;});
