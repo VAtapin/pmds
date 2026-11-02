@@ -72,3 +72,11 @@ const files=[];function walk(path){for(const name of readdirSync(path)){const fu
 let linkCount=0;
 for(const path of files){const body=readFileSync(path,'utf8');assert(!body.includes('undefined'),path);for(const match of body.matchAll(/(?:href|src)="([^"]+)"/g)){let link=match[1].replaceAll('&amp;','&');if(/^(https?:|mailto:|data:|#)/.test(link))continue;link=decodeURIComponent(link.split('#')[0].split('?')[0]);assert(existsSync(resolve(dirname(path),link)),`${path}: missing ${link}`);linkCount++;}}
 console.log(`Checked sources-only publication: 33 subjects, ${files.length} pages, ${linkCount} local links; ${records.length} transcript segments and ${quoteCount} literal teacher quotations. Author answer archives are excluded from dist.`);
+
+for(const page of ['3-kurs/metodika-prepodavaniya/index.html','documents/metodika-lecture-2026-09-23.html']){
+ const html=readFileSync(join(dist,page),'utf8');
+ assert(!/\d{2}:\d{2}:\d{2}|href="#t-|class="timestamp"|class="transcript-line"/.test(html),'Methodology is readable prose without timing: '+page);
+ const plain=html.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+ let cursor=0;
+ for(const record of records){const text=pyEscape(record[2]).replace(/\s+/g,' ').trim();const index=plain.indexOf(text,cursor);assert(index>=0,'Transcript text preserved in order: '+record[1]);cursor=index+text.length;}
+}
