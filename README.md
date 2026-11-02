@@ -39,19 +39,23 @@ npm run dev
 
 Самостоятельный проект находится в репозитории `https://github.com/VAtapin/pmds.git`, ветка `codex/study-materials`. История этой ветки независима от старого сайта; для установки нового сайта нужно клонировать именно её.
 
-Открыть терминал в каталоге домена (например, `pmds.atapin.de`) и клонировать проект в отдельную подпапку:
+Корень документов сайта в Plesk: `pmds.atapin.de/dist`. Репозиторий размещается непосредственно в каталоге `pmds.atapin.de`, без дополнительной подпапки.
+
+Для первой установки открыть терминал в папке `pmds.atapin.de`, из которой пользователь уже убрал старые материалы, и выполнить:
 
 ```bash
+git init && \
+git remote add origin https://github.com/VAtapin/pmds.git && \
+git fetch origin codex/study-materials && \
+git switch -c codex/study-materials --track origin/codex/study-materials && \
 export PATH="/opt/plesk/node/22/bin:$PATH" && \
-git clone --single-branch --branch codex/study-materials https://github.com/VAtapin/pmds.git uchebnye-materialy && \
-cd uchebnye-materialy && \
 npm run build && \
 npm run check
 ```
 
-В настройках хостинга Plesk установить корень документов на подпапку `uchebnye-materialy/dist` внутри каталога домена. При установке из `pmds.atapin.de` это `pmds.atapin.de/uchebnye-materialy/dist`. Это каталог готового сайта; исходники и материалы сборки находятся уровнем выше. PHP, Composer, база данных, миграции и установка npm-зависимостей не требуются.
+`git init` подключает Git в существующем каталоге. Сборка создаёт готовый сайт в `dist/`. PHP, Composer, база данных, миграции и установка npm-зависимостей не требуются.
 
-Для обновления запустить из папки клонированного репозитория `uchebnye-materialy`:
+Для обновления запустить из каталога репозитория `pmds.atapin.de`:
 
 ```bash
 export PATH="/opt/plesk/node/22/bin:$PATH" && \
