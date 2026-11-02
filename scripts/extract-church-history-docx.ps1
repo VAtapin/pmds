@@ -61,9 +61,9 @@ foreach ($group in $groups) {
 }
 if ($sourceParagraphs.Count -ne 17) { throw 'Expected source note and 16 references' }
 $data = [ordered]@{
-    title='История Русской Церкви и УПЦ'; sourceDocument=[IO.Path]::GetFileName($DocumentPath)
+    title="Новітня історія Православ’я на Русі"; sourceDocument=[IO.Path]::GetFileName($DocumentPath)
     period='1917–2026'; sourceDate='2026-10-03'
-    courseMeta=@{'1'=@{title='История Русской Церкви и УПЦ'; kicker='ИЦ'; description='1917–2026 · 39 вопросов для устной подготовки к экзамену'; color='var(--course-3)'; soft='var(--course-3-soft)'}}
+    courseMeta=@{'1'=@{title="Новітня історія Православ’я на Русі"; kicker='ИЦ'; description='4 курс · 1917–2026 · 39 вопросов для устной подготовки к экзамену'; color='var(--course-3)'; soft='var(--course-3-soft)'}}
     filterGroups=$groups; questions=$questions; sourceParagraphs=$sourceParagraphs
 }
 $destination=Join-Path $PSScriptRoot '../content/church-history-questions.json'
