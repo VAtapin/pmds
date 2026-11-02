@@ -80,3 +80,9 @@ for(const page of ['3-kurs/metodika-prepodavaniya/index.html','documents/metodik
  let cursor=0;
  for(const record of records){const text=pyEscape(record[2]).replace(/\s+/g,' ').trim();const index=plain.indexOf(text,cursor);assert(index>=0,'Transcript text preserved in order: '+record[1]);cursor=index+text.length;}
 }
+
+const methodologyPage=readFileSync(join(dist,'3-kurs/metodika-prepodavaniya/index.html'),'utf8');
+const assignmentBlock=methodologyPage.match(/<section class="teacher-assignment"[\s\S]*?<\/section>/)?.[0];
+assert(assignmentBlock?.includes(methodology.assignmentSummary),'Publish the concise teacher requirements');
+assert(!assignmentBlock.includes('teacher-quote'),'Do not publish the long quotation collection in the assignment block');
+assert(methodology.assignmentSummary.includes('Сдать работу в письменном виде.'));
