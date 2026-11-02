@@ -22,6 +22,19 @@ for(const subject of subjects){
  if(!(subject.lessons||[]).length)assert(!output.includes('data-chapter'),'No answer-bank chapters on source-only subjects');
  for(const assignment of subject.teacherAssignments||[])assert(data.documents.some(d=>d.id===assignment.sourceId&&d.access==='student'),'Assignment has a supplied public source');
 }
+const history=data.documents.find(d=>d.id==='church-history-study');
+assert(history&&history.access==='student','History study text is published');
+assert.equal(history.sourceOriginalId,'document-11');
+assert.equal(history.sections.length,14);
+assert.deepEqual([...new Set(history.sections.flatMap(s=>s.sourceTopics))].sort((a,b)=>a-b),Array.from({length:39},(_,i)=>i+1),'All 39 history topics covered');
+assert(!/Что запомнить|Коротко важное|class="key-point"|<summary/i.test(history.html),'History is a continuous study text');
+const historyPage=readFileSync(join(dist,'documents/church-history-study.html'),'utf8');
+for(const section of history.sections){assert(history.html.includes(`id="${section.id}"`));assert(history.html.includes(`href="#${section.id}"`));assert(!section.title.includes('?'));assert(historyPage.includes(section.title));}
+assert(historyPage.includes('Учебный материал'));
+assert.equal(data.documents.find(d=>d.id==='document-11').access,'author-archive','Original answer guide remains archived');
+const historySubject=subjects.find(s=>s.course===4&&s.slug==='istoriya-cerkvi');
+assert(historySubject.documents.some(d=>d.id===history.id),'Study text linked from subject');
+assert.equal(historySubject.teacherAssignments.length,0,'No invented teacher assignments');
 const methodology=subjects.find(s=>s.course===3&&s.slug==='metodika-prepodavaniya');
 assert.equal(methodology.lessons.length,12);assert.equal(methodology.teacherAssignments.length,9);
 const transcript=data.documents.find(d=>d.id==='metodika-lecture-2026-09-23');
