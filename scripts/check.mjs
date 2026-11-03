@@ -86,3 +86,15 @@ const assignmentBlock=methodologyPage.match(/<section class="teacher-assignment"
 assert(assignmentBlock?.includes(methodology.assignmentSummary),'Publish the concise teacher requirements');
 assert(!assignmentBlock.includes('teacher-quote'),'Do not publish the long quotation collection in the assignment block');
 assert(methodology.assignmentSummary.includes('Сдать работу в письменном виде.'));
+
+const schisms = subjects.find(s=>s.course===4&&s.slug==='istoriya-raskolov');
+const schismsDoc=data.documents.find(d=>d.id==='schisms-lecture-2026-11-03');
+assert.equal(schisms.lessons.length,11);assert.equal(schismsDoc.sections.length,11);
+assert(schismsDoc.sections.every(s=>s.end<=3132),'Personal examination is outside published lecture');
+assert.equal(schisms.teacherAssignments.length,1);
+assert.equal((schisms.teacherAssignments[0].html.match(/<li>/g)||[]).length,9);
+const schismsPage=readFileSync(join(dist,'4-kurs/istoriya-raskolov/index.html'),'utf8');
+for(const part of schisms.lessons){assert(schismsPage.includes(part.title));assert(schismsPage.includes(part.html));}
+assert(schismsPage.includes(schisms.assignmentIntro));assert(!schismsPage.includes('Временные метки ведут'),'Translation intro is accurate');
+assert(!/на какую оценку|пят[её]рку|Владимир, на/iu.test(schismsPage),'Individual examination excluded');
+console.log('Checked schisms lecture translation, 11 parts and nine teacher topics; personal examination excluded.');
