@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Подготовка к экзамену по истории церковных расколов для 4 курса: 12 разделов, поиск по ответам и темы.">
+  <meta name="theme-color" content="#17233c">
+  <title>Історія церковних розколів — 4 курс</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#question-list">К вопросам</a>
+  <header class="masthead">
+    <div class="masthead__inner">
+      <nav class="page-nav" aria-label="Навигация"><a class="home-link" href="../4-kurs/">← Предметы 4 курса</a></nav>
+      <div class="title-row">
+        <div><p class="eyebrow">Подготовка к экзамену · 4 курс</p><h1>Історія церковних розколів</h1></div>
+        <div class="summary"><strong id="total-count">12</strong><span>разделов</span></div>
+      </div>
+      <p class="intro">Экзамен 10.11.2026 · Лекция 03.11.2026. Главные темы преподавателя и 12 карточек для беседы. УАПЦ, УПЦ КП и ПЦУ — самостоятельная подготовка; дополнения помечены в ответах. Это учебные вопросы по темам лекции, а не официальный список билетов.</p>
+
+    </div>
+  </header>
+  <main id="question-list">
+    <section class="finder" aria-label="Поиск и фильтры">
+      <label class="search" for="search-input"><span aria-hidden="true">⌕</span><input id="search-input" type="search" autocomplete="off" placeholder="Найти вопрос, термин или фразу в ответе…"><kbd>/</kbd></label>
+      <div class="quick-row"><button class="reset-button" id="reset-button" type="button" hidden>Сбросить фильтр</button><p id="result-count" aria-live="polite">Показаны все 12 разделов</p></div>
+      <div class="tag-cloud" id="tag-cloud" aria-label="Фильтр по темам"></div>
+    </section>
+    <section class="content-shell"><div id="questions"></div><div class="empty-state" id="empty-state" hidden><p>По этому запросу ничего не найдено.</p><button id="empty-reset" type="button">Показать все вопросы</button></div>
+      <details class="sources"><summary>Материалы, по которым подготовлен раздел</summary><ul id="sources-list"></ul></details>
+    </section>
+  </main>
+  <footer>Открой карточку, чтобы увидеть развернутый ответ и краткий тезис для повторения.</footer>
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

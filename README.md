@@ -105,3 +105,9 @@ node --test --test-isolation=none tests/religious-movements-content.test.mjs
 - Проверка: `node --test tests/patrologiya-content.test.mjs`.
 
 Общие справочники открываются с `?course=2`, `?course=3` или `?course=4`: выбран только нужный курс, сброс возвращает исходный выбор. Старые прямые ссылки работают. Проверка навигации: `node --test tests/course-navigation.test.mjs tests/patrologiya-content.test.mjs`.
+
+## История церковных расколов — 4 курс
+
+`dist/istoriya-raskolov/` — 12 карточек по лекции 03.11.2026 и девяти тематическим ориентирам преподавателя; экзамен 10.11.2026. УАПЦ, УПЦ КП и ПЦУ дополнены для самостоятельного изучения, дополнения обозначены и снабжены источниками. Это учебные вопросы, не официальный нумерованный билетник.
+
+`content/schisms-lecture-ru.json` хранит русский перевод самой лекции: без обсуждений слушателей и индивидуального опроса. Публичная лекция и темы преподавателя находятся в PMDS. MP3 и полная необработанная расшифровка в Git не добавляются. Данные карточек: `content/schisms-questions.json`; сборка: `node scripts/build-schisms-static-site.mjs`.

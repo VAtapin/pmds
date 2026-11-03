@@ -7,7 +7,7 @@ const read=p=>fs.readFileSync(p,'utf8');
 test('All subjects are reachable through the correct course and local links resolve',()=>{
  const root=read('dist/index.html');
  assert.equal((root.match(/class="subject-card"/g)||[]).length,3);
- const expected={2:['dogmatika','religii','katehizis','novyi-zavet'],3:['dogmatika','sravnitelnoe-bogoslovie','sravnitelnoe-bogoslovie-3-kurs','patrologiya'],4:['nravstvennoe-bogoslovie','sravnitelnoe-bogoslovie','cerkovnoe-iskusstvo','istoriya-russkoi-cerkvi','religioznye-dvizheniya','kanonicheskoe-pravo']};
+ const expected={2:['dogmatika','religii','katehizis','novyi-zavet'],3:['dogmatika','sravnitelnoe-bogoslovie','sravnitelnoe-bogoslovie-3-kurs','patrologiya'],4:['nravstvennoe-bogoslovie','sravnitelnoe-bogoslovie','cerkovnoe-iskusstvo','istoriya-russkoi-cerkvi','religioznye-dvizheniya','kanonicheskoe-pravo','istoriya-raskolov']};
  for(const [c,slugs] of Object.entries(expected)){
   const p=`dist/${c}-kurs/index.html`, html=read(p);
   assert.ok(root.includes(`href="${c}-kurs/"`));
