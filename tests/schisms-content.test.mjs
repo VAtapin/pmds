@@ -19,3 +19,8 @@ test('Only lecture and lecturer requirements are retained, not personal examinat
  assert.match(data.questions[4].answer,/23 октября 1921/);
  assert.match(data.questions[7].answer,/УГКЦ не признаёт/);
 });
+
+test('External clarification links use public hosts and open outside the study page',()=>{
+ assert.ok(!JSON.stringify(data).includes('direct.ugcc.ua'));
+ for(const q of data.questions)for(const link of q.answer.matchAll(/<a href="https:[^>]+>/g)){assert.match(link[0],/target="_blank"/);assert.match(link[0],/rel="noopener noreferrer"/);}
+});
