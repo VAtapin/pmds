@@ -98,3 +98,6 @@ for(const part of schisms.lessons){assert(schismsPage.includes(part.title));asse
 assert(schismsPage.includes(schisms.assignmentIntro));assert(!schismsPage.includes('Временные метки ведут'),'Translation intro is accurate');
 assert(!/на какую оценку|пят[её]рку|Владимир, на/iu.test(schismsPage),'Individual examination excluded');
 console.log('Checked schisms lecture translation, 11 parts and nine teacher topics; personal examination excluded.');
+
+assert(!schismsPage.includes('Перевод украинской речи на русский с удалением речевых повторов.'),'No processing preface on lecture page');
+assert(!readFileSync(join(dist,'documents/schisms-lecture-2026-11-03.html'),'utf8').includes('Перевод украинской речи на русский с удалением речевых повторов.'),'No processing preface in reader');

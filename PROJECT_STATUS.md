@@ -59,3 +59,5 @@
 - Ответы и памятки подготовлены в соседнем экзаменационном проекте, в этой библиотеке опубликованы только лекция и требования.
 - Проверки: npm run build, npm run check (55 HTML, 620 локальных ссылок), синтаксис build/check и git diff --check. Production не обновлён.
 - Последний связанный commit: f3f869b; текущий блок — Add translated schisms lecture and teacher exam topics.
+
+- По прямому запросу владельца удалён вводный служебный абзац о переводе со страницы лекции, из документа и скачиваемого TXT. Сама лекция и темы не изменены. Проверки: build/check, git diff --check. Последний связанный commit: b460dac; текущий блок — Remove lecture processing preface.
