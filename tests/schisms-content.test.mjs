@@ -14,7 +14,7 @@ test('Schisms study guide covers all teacher themes and preserves generated data
 test('Only lecture and lecturer requirements are retained, not personal examination',()=>{
  assert.equal(lecture.sections.length,11);assert.ok(lecture.sections.every(s=>s.end<=3132));
  const all=JSON.stringify({lecture,data});assert.doesNotMatch(all,/на яку оцінку|на какую оценку|пят[её]рку|місцеблюстителі після|Владимир, на/iu);
- assert.match(lecture.editorialNote,/вопросы и обсуждения слушателей/);
+ assert.equal(lecture.editorialNote,undefined);
  assert.ok(lecture.sections.some(s=>s.start>=3094));
  assert.match(data.questions[4].answer,/23 октября 1921/);
  assert.match(data.questions[7].answer,/УГКЦ не признаёт/);
