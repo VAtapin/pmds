@@ -101,3 +101,6 @@ console.log('Checked schisms lecture translation, 11 parts and nine teacher topi
 
 assert(!schismsPage.includes('Перевод украинской речи на русский с удалением речевых повторов.'),'No processing preface on lecture page');
 assert(!readFileSync(join(dist,'documents/schisms-lecture-2026-11-03.html'),'utf8').includes('Перевод украинской речи на русский с удалением речевых повторов.'),'No processing preface in reader');
+
+assert(!schismsDoc.html.includes('direct.ugcc.ua'),'Use the public UGCC domain');
+for(const link of schismsDoc.html.matchAll(/<a href="https:[^>]+>/g)){assert(link[0].includes('target="_blank"'));assert(link[0].includes('rel="noopener noreferrer"'));}

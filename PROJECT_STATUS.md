@@ -61,3 +61,5 @@
 - Последний связанный commit: f3f869b; текущий блок — Add translated schisms lecture and teacher exam topics.
 
 - По прямому запросу владельца удалён вводный служебный абзац о переводе со страницы лекции, из документа и скачиваемого TXT. Сама лекция и темы не изменены. Проверки: build/check, git diff --check. Последний связанный commit: b460dac; текущий блок — Remove lecture processing preface.
+
+- Исправлены внешние ссылки уточнений: основной домен ugcc.ua вместо direct.ugcc.ua; обе ссылки открываются в новой вкладке. УИНП и основной адрес УГКЦ проверены HTTP-запросами: 200. Проверки: build/check, синтаксис check и git diff --check. Последний связанный commit: 2e8ab14; текущий блок — Fix external clarification links.
