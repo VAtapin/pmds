@@ -1,6 +1,7 @@
 import {readFileSync,writeFileSync,mkdirSync,cpSync,rmSync} from 'node:fs';
 import {resolve,dirname,join} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {convertWordDocument} from './word-to-html.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const dist=resolve(root,'dist');
 const library=JSON.parse(readFileSync(join(root,'content/library.json'),'utf8'));
@@ -30,8 +31,14 @@ rmSync(dist,{recursive:true,force:true});mkdirSync(dist,{recursive:true});
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const write=(name,html)=>{const path=join(dist,name);mkdirSync(dirname(path),{recursive:true});writeFileSync(path,html,'utf8')};
 const publicDocuments=library.documents.filter(d=>d.access==='student');
-const publicIds=new Set(publicDocuments.map(d=>d.id));
-const docs=s=>s.documents.map(ref=>{const source=publicDocuments.find(d=>d.id===ref.id);return source?{...source,...ref,filename:source.filename,originalName:source.originalName,html:source.html,kind:source.kind}:null;}).filter(Boolean);
+const course12DocumentIds=new Set(library.courses.filter(c=>[1,2].includes(c.number)).flatMap(c=>c.subjects.flatMap(s=>s.documents.map(ref=>ref.id))));
+const convertedWordDocuments=new Map();
+for(const doc of publishedDocuments){
+ if(!course12DocumentIds.has(doc.id)||!doc.filename||!/\\.docx?$/i.test(doc.filename))continue;
+ convertedWordDocuments.set(doc.id,await convertWordDocument(join(root,'materials',doc.filename)));
+}
+const publishedDocuments=publicDocuments.map(doc=>convertedWordDocuments.has(doc.id)?{...doc,html:convertedWordDocuments.get(doc.id)}:doc);
+const docs=s=>s.documents.map(ref=>{const source=publishedDocuments.find(d=>d.id===ref.id);return source?{...source,...ref,filename:source.filename,originalName:source.originalName,html:source.html,kind:source.kind}:null;}).filter(Boolean);
 const lessons=s=>s.lessons||[];
 const available=s=>docs(s).length>0||lessons(s).length>0;
 const aliases={'cerkovnoe-iskusstvo':'церковное искусство иконы архитектура','dogmatika':'догматика','istoriya-cerkvi':'история церкви упц','religioznye-dvizheniya':'сектоведение религии секты','kanonicheskoe-pravo':'каноника каноническое право приход'};
@@ -43,7 +50,7 @@ function documentCard(d,prefix){
  const full=publicDocuments.find(x=>x.id===d.id);
  const reader=Boolean(full.html);
  const open=reader?`${prefix}documents/${d.id}.html`:filename;
- return `<div class="document-card"><span class="document-kind">${esc(d.kind.toUpperCase())}</span><div><h3>${esc(d.title)}</h3><p>${esc(d.originalName)}</p>${d.kind==='audio'?`<audio controls preload="none" src="${filename}">Аудиозапись лекции</audio>`:`<a href="${open}" ${reader?'':'target="_blank" rel="noopener"'}>${reader?'Читать источник':'Открыть источник'} →</a>`}${filename?`<a class="download" href="${filename}" download="${esc(d.originalName)}">Скачать файл</a>`:''}</div></div>`;
+ return `<div class="document-card"><span class="document-kind">${esc(d.kind.toUpperCase())}</span><div><h3>${esc(d.title)}</h3><p>${esc(d.originalName)}</p>${d.kind==='audio'?`<audio controls preload="none" src="${filename}">Аудиозапись лекции</audio>`:`<a href="${open}" ${reader?'':'target="_blank" rel="noopener"'}>${reader?'Читать источник':'Открыть источник'} →</a>`}${filename?`<a class="download" href="${filename}" download="${esc(d.originalName)}">\${course12DocumentIds.has(d.id)?'Скачать оригинал':'Скачать файл'}</a>`:''}</div></div>`;
 }
 function subjectCard(s){
  const has=available(s),literature=s.literature.length>0;
@@ -72,4 +79,4 @@ for(const doc of publicDocuments){
  write(`documents/${doc.id}.html`,shell(doc.title,`<main id="main" class="document-reader"><div class="breadcrumbs"><a href="../index.html">Главная</a><span>/</span><span>Источник</span></div><header class="document-title"><p class="eyebrow">${esc(doc.readerLabel||'Исходный учебный материал')}</p><h1>${esc(doc.title)}</h1><div class="document-actions">${parents.map(s=>`<a href="../${s.course}-kurs/${s.slug}/index.html">← ${esc(s.title)} · ${s.course} курс</a>`).join('')}${doc.filename?`<a href="../materials/${doc.filename}" download="${esc(doc.originalName)}">Скачать оригинал</a>`:''}<button type="button" data-print>Печать</button></div></header><article class="source-document prose">${doc.html}</article></main>`,'../'));
 }
 mkdirSync(join(dist,'assets'),{recursive:true});for(const name of ['styles.css','app.js'])cpSync(join(root,'assets',name),join(dist,'assets',name));
-console.log(`Built ${total} subject pages, ${publicDocuments.length} student sources and ${library.courses.flatMap(c=>c.subjects).reduce((n,s)=>n+lessons(s).length,0)} lecture parts. Prepared answers remain outside dist.`);
+console.log(`Built ${total} subject pages, ${publicDocuments.length} student sources, ${convertedWordDocuments.size} Word readers for courses 1–2 and ${library.courses.flatMap(c=>c.subjects).reduce((n,s)=>n+lessons(s).length,0)} lecture parts. Prepared answers remain outside dist.`);
