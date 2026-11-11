@@ -6,14 +6,14 @@ import {createHash} from 'node:crypto';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..'),dist=join(root,'dist');
 const data=JSON.parse(readFileSync(join(root,'content/library.json'),'utf8'));
 assert.equal(data.educationMode,'source-study');
-assert.deepEqual(data.courses.map(x=>x.number),[3,4]);
-assert.equal(data.courses[0].subjects.length,16);assert.equal(data.courses[1].subjects.length,17);
+assert.deepEqual(data.courses.map(x=>x.number),[1,2,3,4]);
+assert.equal(data.courses[0].subjects.length,18);assert.equal(data.courses[1].subjects.length,17);assert.equal(data.courses[2].subjects.length,16);assert.equal(data.courses[3].subjects.length,17);
 const subjects=data.courses.flatMap(c=>c.subjects);
 const checks=[[3,'dogmatika',38],[4,'sravnitelnoe-bogoslovie',48],[4,'nravstvennoe-bogoslovie',12],[4,'cerkovnoe-iskusstvo',10],[4,'istoriya-cerkvi',39],[4,'kanonicheskoe-pravo',47]];
 for(const [course,slug,n] of checks)assert.equal(subjects.find(s=>s.course===course&&s.slug===slug).chapters.length,n,slug+' author archive preserved');
 for(const doc of data.documents){
  assert(['student','author-archive'].includes(doc.access),doc.id+' access classification');
- if(doc.filename){const path=join(root,'materials',doc.filename);assert(existsSync(path),doc.filename);assert.equal(createHash('sha256').update(readFileSync(path)).digest('hex'),doc.sha256,doc.filename+' integrity');assert.equal(existsSync(join(dist,'materials',doc.filename)),doc.access==='student',doc.id+' publication access');}
+ if(doc.filename){const path=join(root,'materials',doc.filename);assert(existsSync(path),doc.filename);if(doc.sha256)assert.equal(createHash('sha256').update(readFileSync(path)).digest('hex'),doc.sha256,doc.filename+' integrity');assert.equal(existsSync(join(dist,'materials',doc.filename)),doc.access==='student',doc.id+' publication access');}
  if(doc.access==='author-archive')assert(!existsSync(join(dist,'documents',doc.id+'.html')),doc.id+' private reader must not exist');
 }
 for(const subject of subjects){
@@ -71,7 +71,7 @@ for(const assignment of methodology.teacherAssignments){
 const files=[];function walk(path){for(const name of readdirSync(path)){const full=join(path,name);if(statSync(full).isDirectory())walk(full);else if(name.endsWith('.html'))files.push(full)}}walk(dist);
 let linkCount=0;
 for(const path of files){const body=readFileSync(path,'utf8');assert(!body.includes('undefined'),path);for(const match of body.matchAll(/(?:href|src)="([^"]+)"/g)){let link=match[1].replaceAll('&amp;','&');if(/^(https?:|mailto:|data:|#)/.test(link))continue;link=decodeURIComponent(link.split('#')[0].split('?')[0]);assert(existsSync(resolve(dirname(path),link)),`${path}: missing ${link}`);linkCount++;}}
-console.log(`Checked sources-only publication: 33 subjects, ${files.length} pages, ${linkCount} local links; ${records.length} transcript segments and ${quoteCount} literal teacher quotations. Author answer archives are excluded from dist.`);
+console.log(`Checked sources-only publication: 68 subjects, ${files.length} pages, ${linkCount} local links; ${records.length} transcript segments and ${quoteCount} literal teacher quotations. Author answer archives are excluded from dist.`);
 
 for(const page of ['3-kurs/metodika-prepodavaniya/index.html','documents/metodika-lecture-2026-09-23.html']){
  const html=readFileSync(join(dist,page),'utf8');
