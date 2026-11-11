@@ -20,9 +20,16 @@
             "category": "А"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-intro-theology",
+              "title": "Введение в богословие",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -40,9 +47,16 @@
             "category": "Б"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-biblical-history",
+              "title": "Библейская история",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -87,9 +101,16 @@
             "category": "А"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-church-history",
+              "title": "Общецерковная история",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -160,9 +181,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-christian-ethics",
+              "title": "Христианская этика",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -180,9 +208,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-logic",
+              "title": "Логика",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -200,9 +235,16 @@
             "category": "А"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-church-charter",
+              "title": "Церковный устав",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -320,9 +362,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-ukrainian-language",
+              "title": "Украинский язык — профессиональное направление",
+              "kind": "doc",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -340,9 +389,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-history-culture-ukraine",
+              "title": "История и культура Украины",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -380,9 +436,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-work-safety",
+              "title": "Безопасность жизнедеятельности и охрана труда",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         }
@@ -648,12 +711,6 @@
               "title": "Догматическое богословие — дополнительные вопросы и ответы",
               "kind": "json",
               "access": "student"
-            },
-            {
-              "id": "c2-dogmatics-full-source",
-              "title": "Догматическое богословие — полный учебный материал",
-              "kind": "doc",
-              "access": "student"
             }
           ],
           "literature": [],
@@ -695,7 +752,20 @@
             "category": "А"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c2-history-rus-audio-1",
+              "title": "История Православия на Руси — аудиозапись 1",
+              "kind": "audio",
+              "access": "student"
+            },
+            {
+              "id": "c2-history-rus-audio-2",
+              "title": "История Православия на Руси — аудиозапись 2",
+              "kind": "audio",
+              "access": "student"
+            }
+          ],
           "literature": [],
           "description": "К предмету добавлены учебные документы и дополнительные материалы из библиотеки ПМДС.",
           "lessons": [],
@@ -719,6 +789,12 @@
             {
               "id": "c2-latin-source",
               "title": "Латинский язык — учебный материал",
+              "kind": "docx",
+              "access": "student"
+            },
+            {
+              "id": "c2-latin-supplement",
+              "title": "Латинский язык — дополнительный материал",
               "kind": "docx",
               "access": "student"
             },
@@ -898,6 +974,12 @@
               "id": "c2-homiletics-source",
               "title": "Гомилетика — учебный материал",
               "kind": "doc",
+              "access": "student"
+            },
+            {
+              "id": "c2-homiletics-textbook",
+              "title": "В. В. Бурега — Гомилетика: учебник бакалавра теологии",
+              "kind": "pdf",
               "access": "student"
             }
           ],
@@ -5878,10 +5960,9 @@
       "id": "c2-old-testament-notes",
       "title": "Священное Писание Ветхого Завета — конспект 2 курса",
       "filename": "course-2-old-testament-notes.doc",
-      "originalName": "Конспект по ВЗ, 2 курс. правки.doc",
+      "originalName": "Конспект по ВЗ, 2 курс правки ЛЛ..doc",
       "kind": "doc",
-      "access": "student",
-      "sourcePath": "PMDS_Library/02 — Второй курс/Ветхий Завет/Конспект по ВЗ, 2 курс. правки.doc"
+      "access": "student"
     },
     {
       "id": "c2-new-testament-notes",
@@ -5972,6 +6053,87 @@
       "access": "student"
     },
     {
+      "id": "c1-intro-theology",
+      "title": "Введение в богословие",
+      "filename": "course-1-intro-theology.docx",
+      "originalName": "Введение в богословие.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Введение в богословие.docx"
+    },
+    {
+      "id": "c1-biblical-history",
+      "title": "Библейская история",
+      "filename": "course-1-biblical-history.docx",
+      "originalName": "Библейская история.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Библейская история.docx"
+    },
+    {
+      "id": "c1-history-culture-ukraine",
+      "title": "История и культура Украины",
+      "filename": "course-1-history-culture-ukraine.docx",
+      "originalName": "История и культура Украины.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/История и культура Украины.docx"
+    },
+    {
+      "id": "c1-logic",
+      "title": "Логика",
+      "filename": "course-1-logic.docx",
+      "originalName": "Логика.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Логика.docx"
+    },
+    {
+      "id": "c1-church-history",
+      "title": "Общецерковная история",
+      "filename": "course-1-church-history.docx",
+      "originalName": "Общецерковная история.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Общецерковная история.docx"
+    },
+    {
+      "id": "c1-ukrainian-language",
+      "title": "Украинский язык — профессиональное направление",
+      "filename": "course-1-ukrainian-language.doc",
+      "originalName": "Украинский язык.doc",
+      "kind": "doc",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Украинский язык.doc"
+    },
+    {
+      "id": "c1-christian-ethics",
+      "title": "Христианская этика",
+      "filename": "course-1-christian-ethics.docx",
+      "originalName": "Христианская этика.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Христианская этика.docx"
+    },
+    {
+      "id": "c1-church-charter",
+      "title": "Церковный устав",
+      "filename": "course-1-church-charter.docx",
+      "originalName": "Церковный устав.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Церковный устав.docx"
+    },
+    {
+      "id": "c1-work-safety",
+      "title": "Безопасность жизнедеятельности и охрана труда",
+      "filename": "course-1-work-safety.docx",
+      "originalName": "Охорона праці, безпека житд.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Охорона праці, безпека житд.docx"
+    },
+    {
       "id": "c2-main-dogmatics-questions",
       "title": "Догматическое богословие — дополнительные вопросы и ответы",
       "filename": "course-2-dogmatics-supplement.json",
@@ -6034,22 +6196,49 @@
       "sourcePath": "PMDS_Library/02 — Второй курс/Гомилетика/Гомилетика.doc"
     },
     {
+      "id": "c2-homiletics-textbook",
+      "title": "В. В. Бурега — Гомилетика: учебник бакалавра теологии",
+      "filename": "course-2-homiletics-textbook.pdf",
+      "originalName": "burega_v_v_gomiletika_uchebnik_bakalavra_teologii.pdf",
+      "kind": "pdf",
+      "access": "student",
+      "sourcePath": "PMDS_Library/материалы - не определены/burega_v_v_gomiletika_uchebnik_bakalavra_teologii.pdf"
+    },
+    {
+      "id": "c2-latin-supplement",
+      "title": "Латинский язык — дополнительный материал",
+      "filename": "course-2-latin-supplement.docx",
+      "originalName": "Latina.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Latina.docx"
+    },
+    {
       "id": "c2-latin-control",
-      "title": "Латинский язык — контрольная работа",
+      "title": "Латинский язык — дополнительная контрольная работа",
       "filename": "course-2-latin-control.docx",
       "originalName": "К.р. Латинська мова.docx",
       "kind": "docx",
       "access": "student",
-      "sourcePath": "PMDS_Library/02 — Второй курс/Латинский язык/К.р. Латинська мова.docx"
+      "sourcePath": "PMDS_Library/05 — Курс не определён/К.р. Латинська мова.docx"
     },
     {
-      "id": "c2-dogmatics-full-source",
-      "title": "Догматическое богословие — полный учебный материал",
-      "filename": "course-2-dogmatics-full.doc",
-      "originalName": "Догматическое богословие.doc",
-      "kind": "doc",
+      "id": "c2-history-rus-audio-1",
+      "title": "История Православия на Руси — аудиозапись 1",
+      "filename": "course-2-history-rus-lecture-1.m4a",
+      "originalName": "1. История Прав. на Руси 2курс.m4a",
+      "kind": "audio",
       "access": "student",
-      "sourcePath": "PMDS_Library/02 — Второй курс/Догматическое богословие/Догматическое богословие.doc"
+      "sourcePath": "PMDS_Library/материалы - не определены/1. История Прав. на Руси 2курс.m4a"
+    },
+    {
+      "id": "c2-history-rus-audio-2",
+      "title": "История Православия на Руси — аудиозапись 2",
+      "filename": "course-2-history-rus-lecture-2.m4a",
+      "originalName": "2. Истрия Прав. на Руси 2 курс.m4a",
+      "kind": "audio",
+      "access": "student",
+      "sourcePath": "PMDS_Library/материалы - не определены/2. Истрия Прав. на Руси 2 курс.m4a"
     }
   ],
   "importSummary": {
