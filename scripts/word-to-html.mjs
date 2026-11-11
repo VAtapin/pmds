@@ -10,12 +10,12 @@ const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({
 }[char]));
 
 function legacyTextToHtml(text){
- const lines=String(text??'').replace(/\r\n?/g,'\n').split('\n');
+ const lines=String(text??'').replace(/\r\n?/g,'\n').replace(/\f/g,'\n\f\n').split('\n');
  const blocks=[];
  for(const rawLine of lines){
+  if(rawLine.includes('\f')){blocks.push('<hr>');continue;}
   const line=rawLine.replace(/\u0000/g,'').trim();
   if(!line){continue;}
-  if(line==='\f'){blocks.push('<hr>');continue;}
   const cells=line.split('\t');
   if(cells.length>1){
    blocks.push('<p class="legacy-tabular">'+cells.map(cell=>'<span>'+escapeHtml(cell.trim())+'</span>').join('')+'</p>');
