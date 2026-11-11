@@ -899,6 +899,70 @@
           "lessons": [],
           "teacherAssignments": []
         }
+      ],
+      "additionalSubjects": [
+        {
+          "slug": "filosofiya",
+          "title": "Философия",
+          "officialTitle": "Философия",
+          "course": 2,
+          "additional": true,
+          "schedule": {
+            "teacher": "",
+            "lecture": "",
+            "study": "",
+            "assessment": "",
+            "assessmentType": "",
+            "category": ""
+          },
+          "chapters": [],
+          "documents": [
+            {
+              "id": "c2-philosophy-source",
+              "title": "Философия — учебный материал",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
+          "literature": [],
+          "description": "Дополнительная дисциплина из папки материалов второго курса; в текущем расписании курса отдельной строкой не указана.",
+          "lessons": [],
+          "teacherAssignments": []
+        },
+        {
+          "slug": "gomiletika",
+          "title": "Гомилетика",
+          "officialTitle": "Гомилетика",
+          "course": 2,
+          "additional": true,
+          "schedule": {
+            "teacher": "",
+            "lecture": "",
+            "study": "",
+            "assessment": "",
+            "assessmentType": "",
+            "category": ""
+          },
+          "chapters": [],
+          "documents": [
+            {
+              "id": "c2-homiletics-source",
+              "title": "Гомилетика — учебный материал",
+              "kind": "doc",
+              "access": "student"
+            },
+            {
+              "id": "c2-homiletics-textbook",
+              "title": "В. В. Бурега — Гомилетика: учебник бакалавра теологии",
+              "kind": "pdf",
+              "access": "student"
+            }
+          ],
+          "literature": [],
+          "description": "Дополнительная дисциплина из папки материалов второго курса. Добавлены учебный документ и профильный учебник.",
+          "lessons": [],
+          "teacherAssignments": []
+        }
       ]
     },
     {
@@ -6087,6 +6151,33 @@
       "readerLabel": "Дополнительный материал из main",
       "sourceBranch": "main",
       "sourceNote": "Дополнительный материал из main. В исходной разметке файла указан 3 курс; он сохранён здесь как дополнительный источник по вашему указанию."
+    },
+    {
+      "id": "c2-philosophy-source",
+      "title": "Философия — учебный материал",
+      "filename": "course-2-philosophy.docx",
+      "originalName": "Философия.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/02 — Второй курс/Философия/Философия.docx"
+    },
+    {
+      "id": "c2-homiletics-source",
+      "title": "Гомилетика — учебный материал",
+      "filename": "course-2-homiletics.doc",
+      "originalName": "Гомилетика.doc",
+      "kind": "doc",
+      "access": "student",
+      "sourcePath": "PMDS_Library/02 — Второй курс/Гомилетика/Гомилетика.doc"
+    },
+    {
+      "id": "c2-homiletics-textbook",
+      "title": "В. В. Бурега — Гомилетика: учебник бакалавра теологии",
+      "filename": "course-2-homiletics-textbook.pdf",
+      "originalName": "burega_v_v_gomiletika_uchebnik_bakalavra_teologii.pdf",
+      "kind": "pdf",
+      "access": "student",
+      "sourcePath": "PMDS_Library/материалы - не определены/burega_v_v_gomiletika_uchebnik_bakalavra_teologii.pdf"
     }
   ],
   "importSummary": {
