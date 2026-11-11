@@ -752,9 +752,22 @@
             "category": "А"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c2-history-rus-audio-1",
+              "title": "История Православия на Руси — аудиозапись 1",
+              "kind": "audio",
+              "access": "student"
+            },
+            {
+              "id": "c2-history-rus-audio-2",
+              "title": "История Православия на Руси — аудиозапись 2",
+              "kind": "audio",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные документы и дополнительные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -778,10 +791,22 @@
               "title": "Латинский язык — учебный материал",
               "kind": "docx",
               "access": "student"
+            },
+            {
+              "id": "c2-latin-supplement",
+              "title": "Латинский язык — дополнительный материал",
+              "kind": "docx",
+              "access": "student"
+            },
+            {
+              "id": "c2-latin-control",
+              "title": "Латинский язык — дополнительная контрольная работа",
+              "kind": "docx",
+              "access": "student"
             }
           ],
           "literature": [],
-          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
+          "description": "К предмету добавлены учебные документы и дополнительные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -6178,6 +6203,42 @@
       "kind": "pdf",
       "access": "student",
       "sourcePath": "PMDS_Library/материалы - не определены/burega_v_v_gomiletika_uchebnik_bakalavra_teologii.pdf"
+    },
+    {
+      "id": "c2-latin-supplement",
+      "title": "Латинский язык — дополнительный материал",
+      "filename": "course-2-latin-supplement.docx",
+      "originalName": "Latina.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Latina.docx"
+    },
+    {
+      "id": "c2-latin-control",
+      "title": "Латинский язык — дополнительная контрольная работа",
+      "filename": "course-2-latin-control.docx",
+      "originalName": "К.р. Латинська мова.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/К.р. Латинська мова.docx"
+    },
+    {
+      "id": "c2-history-rus-audio-1",
+      "title": "История Православия на Руси — аудиозапись 1",
+      "filename": "course-2-history-rus-lecture-1.m4a",
+      "originalName": "1. История Прав. на Руси 2курс.m4a",
+      "kind": "audio",
+      "access": "student",
+      "sourcePath": "PMDS_Library/материалы - не определены/1. История Прав. на Руси 2курс.m4a"
+    },
+    {
+      "id": "c2-history-rus-audio-2",
+      "title": "История Православия на Руси — аудиозапись 2",
+      "filename": "course-2-history-rus-lecture-2.m4a",
+      "originalName": "2. Истрия Прав. на Руси 2 курс.m4a",
+      "kind": "audio",
+      "access": "student",
+      "sourcePath": "PMDS_Library/материалы - не определены/2. Истрия Прав. на Руси 2 курс.m4a"
     }
   ],
   "importSummary": {
