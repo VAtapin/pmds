@@ -21,7 +21,7 @@ for(const subject of subjects){
  for(const ref of subject.documents){
   const doc=data.documents.find(d=>d.id===ref.id&&d.access==='student');
   assert(doc,'Subject document resolves to a published source: '+ref.id);
-  const convertsWord=[1,2].includes(subject.course)&&/\\.docx?$/i.test(doc.filename||'');
+  const convertsWord=[1,2].includes(subject.course)&&/\.docx?$/i.test(doc.filename||'');
   const expected=doc.html||convertsWord?'../../documents/'+doc.id+'.html':'../../materials/'+doc.filename;
   assert(output.includes('href="'+expected+'"'),'Document link points to its actual source: '+ref.id);
  }
@@ -29,7 +29,7 @@ for(const subject of subjects){
  if(!(subject.lessons||[]).length)assert(!output.includes('data-chapter'),'No answer-bank chapters on source-only subjects');
  for(const assignment of subject.teacherAssignments||[])assert(data.documents.some(d=>d.id===assignment.sourceId&&d.access==='student'),'Assignment has a supplied public source');
 }
-const course12WordDocuments=data.documents.filter(doc=>doc.access==='student'&&/\\.docx?$/i.test(doc.filename||'')&&subjects.some(subject=>[1,2].includes(subject.course)&&subject.documents.some(ref=>ref.id===doc.id)));
+const course12WordDocuments=data.documents.filter(doc=>doc.access==='student'&&/\.docx?$/i.test(doc.filename||'')&&subjects.some(subject=>[1,2].includes(subject.course)&&subject.documents.some(ref=>ref.id===doc.id)));
 assert.equal(course12WordDocuments.length,14,'All 14 Word documents from courses 1 and 2 are converted');
 for(const doc of course12WordDocuments){
  const pagePath=join(dist,'documents',doc.id+'.html');
@@ -39,7 +39,7 @@ for(const doc of course12WordDocuments){
  assert(page.includes('Скачать оригинал'),doc.id+' offers the original Word file');
  assert(page.includes('href="../materials/'+doc.filename+'"'),doc.id+' downloads the unchanged original');
 }
-for(const doc of data.documents.filter(doc=>doc.access==='student'&&/\\.docx?$/i.test(doc.filename||'')&&subjects.some(subject=>[3,4].includes(subject.course)&&subject.documents.some(ref=>ref.id===doc.id)))){
+for(const doc of data.documents.filter(doc=>doc.access==='student'&&/\.docx?$/i.test(doc.filename||'')&&subjects.some(subject=>[3,4].includes(subject.course)&&subject.documents.some(ref=>ref.id===doc.id)))){
  if(!doc.html)assert(!existsSync(join(dist,'documents',doc.id+'.html')),doc.id+' from courses 3 and 4 must not gain a new reader');
 }
 const history=data.documents.find(d=>d.id==='church-history-study');
