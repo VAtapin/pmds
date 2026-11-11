@@ -47,10 +47,10 @@ function shell(title,body,prefix='./',course=''){
 }
 function documentCard(d,prefix){
  const filename=d.filename?`${prefix}materials/${encodeURIComponent(d.filename)}`:'';
- const full=publicDocuments.find(x=>x.id===d.id);
+ const full=publishedDocuments.find(x=>x.id===d.id);
  const reader=Boolean(full.html);
  const open=reader?`${prefix}documents/${d.id}.html`:filename;
- return `<div class="document-card"><span class="document-kind">${esc(d.kind.toUpperCase())}</span><div><h3>${esc(d.title)}</h3><p>${esc(d.originalName)}</p>${d.kind==='audio'?`<audio controls preload="none" src="${filename}">Аудиозапись лекции</audio>`:`<a href="${open}" ${reader?'':'target="_blank" rel="noopener"'}>${reader?'Читать источник':'Открыть источник'} →</a>`}${filename?`<a class="download" href="${filename}" download="${esc(d.originalName)}">\${course12DocumentIds.has(d.id)?'Скачать оригинал':'Скачать файл'}</a>`:''}</div></div>`;
+ return `<div class="document-card"><span class="document-kind">${esc(d.kind.toUpperCase())}</span><div><h3>${esc(d.title)}</h3><p>${esc(d.originalName)}</p>${d.kind==='audio'?`<audio controls preload="none" src="${filename}">Аудиозапись лекции</audio>`:`<a href="${open}" ${reader?'':'target="_blank" rel="noopener"'}>${reader?'Читать источник':'Открыть источник'} →</a>`}${filename?`<a class="download" href="${filename}" download="${esc(d.originalName)}">${course12DocumentIds.has(d.id)?'Скачать оригинал':'Скачать файл'}</a>`:''}</div></div>`;
 }
 function subjectCard(s){
  const has=available(s),literature=s.literature.length>0;
