@@ -30,14 +30,31 @@ if(dist!==join(root,'dist')||dist===root)throw new Error('Unsafe output director
 rmSync(dist,{recursive:true,force:true});mkdirSync(dist,{recursive:true});
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const write=(name,html)=>{const path=join(dist,name);mkdirSync(dirname(path),{recursive:true});writeFileSync(path,html,'utf8')};
+const htmlEscape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function renderQuestionBank(doc){
+ const source=JSON.parse(readFileSync(join(root,'materials',doc.filename),'utf8'));
+ let questions=Array.isArray(source.questions)?source.questions:[];
+ if(doc.id==='c2-main-dogmatics-questions')questions=questions.filter(q=>q.course===2);
+ const body=questions.map((q,index)=>{
+  const number=q.number??q.topicNumber??index+1;
+  const title=q.question||q.title||q.topic||'Вопрос '+number;
+  const answer=String(q.answer??q.takeaway??'').trim();
+  const answerHtml=/<[a-z][\s\S]*>/i.test(answer)?answer:answer.split(/\n+/).filter(Boolean).map(line=>'<p>'+htmlEscape(line)+'</p>').join('');
+  const tags=Array.isArray(q.tags)&&q.tags.length?'<p class="eyebrow">'+q.tags.map(htmlEscape).join(' · ')+'</p>':'';
+  return '<article class="question-entry"><h2>'+htmlEscape(number+'. '+title)+'</h2>'+tags+'<div class="question-answer">'+answerHtml+'</div></article>';
+ }).join('');
+ const note=doc.sourceNote?'<p class="source-note">'+htmlEscape(doc.sourceNote)+'</p>':'';
+ return '<section class="question-bank">'+note+'<p class="eyebrow">Вопросов: '+questions.length+'</p>'+body+'</section>';
+}
 const publicDocuments=library.documents.filter(d=>d.access==='student');
 const course12DocumentIds=new Set(library.courses.filter(c=>[1,2].includes(c.number)).flatMap(c=>c.subjects.flatMap(s=>s.documents.map(ref=>ref.id))));
 const convertedWordDocuments=new Map();
 for(const doc of publicDocuments){
  if(!course12DocumentIds.has(doc.id)||!doc.filename||!/\.docx?$/i.test(doc.filename))continue;
- convertedWordDocuments.set(doc.id,await convertWordDocument(join(root,'materials',doc.filename)));
+ convertedWordDocuments.set(doc.id,await convertWordDocument(doc.sourcePath?join(root,doc.sourcePath):join(root,'materials',doc.filename)));
 }
-const publishedDocuments=publicDocuments.map(doc=>convertedWordDocuments.has(doc.id)?{...doc,html:convertedWordDocuments.get(doc.id)}:doc);
+const questionBankDocuments=new Map(publicDocuments.filter(doc=>doc.kind==='json'&&doc.filename).map(doc=>[doc.id,renderQuestionBank(doc)]));
+const publishedDocuments=publicDocuments.map(doc=>{const html=questionBankDocuments.get(doc.id)||convertedWordDocuments.get(doc.id);return html?{...doc,html}:doc;});
 const docs=s=>s.documents.map(ref=>{const source=publishedDocuments.find(d=>d.id===ref.id);return source?{...source,...ref,filename:source.filename,originalName:source.originalName,html:source.html,kind:source.kind}:null;}).filter(Boolean);
 const lessons=s=>s.lessons||[];
 const available=s=>docs(s).length>0||lessons(s).length>0;
@@ -73,7 +90,7 @@ for(const course of library.courses){
  }
 }
 for(const doc of publishedDocuments){
- if(doc.filename){mkdirSync(join(dist,'materials'),{recursive:true});cpSync(join(root,'materials',doc.filename),join(dist,'materials',doc.filename));}
+ if(doc.filename){mkdirSync(join(dist,'materials'),{recursive:true});cpSync(doc.sourcePath?join(root,doc.sourcePath):join(root,'materials',doc.filename),join(dist,'materials',doc.filename));}
  if(!doc.html)continue;
  const parents=library.courses.flatMap(c=>c.subjects.filter(s=>docs(s).some(x=>x.id===doc.id)).map(s=>({course:c.number,...s})));
  const readerCourse=parents.find(parent=>[1,2].includes(parent.course))?.course||'';
