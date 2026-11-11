@@ -4,9 +4,10 @@
 
 ## Запуск
 
-Нужен Node.js 22 или новее. Сторонних зависимостей нет, `npm install` не требуется.
+Нужен Node.js 22 или новее. Перед первой сборкой установите зависимости командой `npm install`.
 
 ```powershell
+npm install
 npm run build
 npm run check
 npm run dev
@@ -25,6 +26,7 @@ npm run dev
 - «Мои заметки» — пустое поле для собственного текста. Оно сохраняется в браузере и экспортируется в TXT; на сервер заметки не отправляются. Готовых ответов, оценивания и выдуманных заданий в этом поле нет.
 - Если исходной лекции нет, это указано на странице предмета. Сохранённый готовый ответ не выдаётся за исходную лекцию.
 - Материалы 1 и 2 курсов включены в ученический сайт по расписанию 2026–2027; документы без надёжной привязки остаются в исходной библиотеке. Ведомость и контактный список группы не публикуются.
+- 14 документов Word 1-го и 2-го курсов автоматически преобразуются в HTML-страницы для чтения; исходные DOC/DOCX остаются доступными по отдельной ссылке «Скачать оригинал». Материалы 3-го и 4-го курсов этой конвертацией не затрагиваются.
 - Отчёт переноса находится в `IMPORT_REPORT.md`.
 
 ## Структура
@@ -53,6 +55,7 @@ git remote add origin https://github.com/VAtapin/pmds.git && \
 git fetch origin codex/study-materials && \
 git switch -c codex/study-materials --track origin/codex/study-materials && \
 export PATH="/opt/plesk/node/22/bin:$PATH" && \
+npm install --omit=dev && \
 npm run build && \
 npm run check
 ```
@@ -64,6 +67,7 @@ npm run check
 ```bash
 export PATH="/opt/plesk/node/22/bin:$PATH" && \
 git pull --ff-only && \
+npm install --omit=dev && \
 npm run build && \
 npm run check
 ```
