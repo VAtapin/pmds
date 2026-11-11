@@ -18,6 +18,12 @@ for(const doc of data.documents){
 }
 for(const subject of subjects){
  const output=readFileSync(join(dist,`${subject.course}-kurs`,subject.slug,'index.html'),'utf8');
+ for(const ref of subject.documents){
+  const doc=data.documents.find(d=>d.id===ref.id&&d.access==='student');
+  assert(doc,'Subject document resolves to a published source: '+ref.id);
+  const expected=doc.html?'../../documents/'+doc.id+'.html':'../../materials/'+doc.filename;
+  assert(output.includes('href="'+expected+'"'),'Document link points to its actual source: '+ref.id);
+ }
  assert(!output.includes('class="key-point"'),'No generated answer summaries on student pages');
  if(!(subject.lessons||[]).length)assert(!output.includes('data-chapter'),'No answer-bank chapters on source-only subjects');
  for(const assignment of subject.teacherAssignments||[])assert(data.documents.some(d=>d.id===assignment.sourceId&&d.access==='student'),'Assignment has a supplied public source');
@@ -70,7 +76,8 @@ for(const assignment of methodology.teacherAssignments){
 }
 const files=[];function walk(path){for(const name of readdirSync(path)){const full=join(path,name);if(statSync(full).isDirectory())walk(full);else if(name.endsWith('.html'))files.push(full)}}walk(dist);
 let linkCount=0;
-for(const path of files){const body=readFileSync(path,'utf8');assert(!body.includes('undefined'),path);for(const match of body.matchAll(/(?:href|src)="([^"]+)"/g)){let link=match[1].replaceAll('&amp;','&');if(/^(https?:|mailto:|data:|#)/.test(link))continue;link=decodeURIComponent(link.split('#')[0].split('?')[0]);assert(existsSync(resolve(dirname(path),link)),`${path}: missing ${link}`);linkCount++;}}
+for(const path of files){const body=readFileSync(path,'utf8');assert(!body.includes('undefined'),path);assert(!/(?:href|src)=""/.test(body),path+": no empty local links");
+ for(const match of body.matchAll(/(?:href|src)="([^"]+)"/g)){let link=match[1].replaceAll('&amp;','&');if(/^(https?:|mailto:|data:|#)/.test(link))continue;link=decodeURIComponent(link.split('#')[0].split('?')[0]);assert(existsSync(resolve(dirname(path),link)),`${path}: missing ${link}`);linkCount++;}}
 console.log(`Checked sources-only publication: 68 subjects, ${files.length} pages, ${linkCount} local links; ${records.length} transcript segments and ${quoteCount} literal teacher quotations. Author answer archives are excluded from dist.`);
 
 for(const page of ['3-kurs/metodika-prepodavaniya/index.html','documents/metodika-lecture-2026-09-23.html']){
