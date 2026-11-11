@@ -31,7 +31,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const write=(name,html)=>{const path=join(dist,name);mkdirSync(dirname(path),{recursive:true});writeFileSync(path,html,'utf8')};
 const publicDocuments=library.documents.filter(d=>d.access==='student');
 const publicIds=new Set(publicDocuments.map(d=>d.id));
-const docs=s=>s.documents.filter(d=>publicIds.has(d.id));
+const docs=s=>s.documents.map(ref=>{const source=publicDocuments.find(d=>d.id===ref.id);return source?{...source,...ref,filename:source.filename,originalName:source.originalName,html:source.html,kind:source.kind}:null;}).filter(Boolean);
 const lessons=s=>s.lessons||[];
 const available=s=>docs(s).length>0||lessons(s).length>0;
 const aliases={'cerkovnoe-iskusstvo':'церковное искусство иконы архитектура','dogmatika':'догматика','istoriya-cerkvi':'история церкви упц','religioznye-dvizheniya':'сектоведение религии секты','kanonicheskoe-pravo':'каноника каноническое право приход'};
