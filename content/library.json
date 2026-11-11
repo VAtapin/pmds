@@ -20,9 +20,16 @@
             "category": "А"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-intro-theology",
+              "title": "Введение в богословие",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -40,9 +47,16 @@
             "category": "Б"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-biblical-history",
+              "title": "Библейская история",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -87,9 +101,16 @@
             "category": "А"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-church-history",
+              "title": "Общецерковная история",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -160,9 +181,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-christian-ethics",
+              "title": "Христианская этика",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -180,9 +208,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-logic",
+              "title": "Логика",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -200,9 +235,16 @@
             "category": "А"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-church-charter",
+              "title": "Церковный устав",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -320,9 +362,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-ukrainian-language",
+              "title": "Украинский язык — профессиональное направление",
+              "kind": "doc",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -340,9 +389,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-history-culture-ukraine",
+              "title": "История и культура Украины",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -380,9 +436,16 @@
             "category": "В"
           },
           "chapters": [],
-          "documents": [],
+          "documents": [
+            {
+              "id": "c1-work-safety",
+              "title": "Безопасность жизнедеятельности и охрана труда",
+              "kind": "docx",
+              "access": "student"
+            }
+          ],
           "literature": [],
-          "description": "Материалы лекции пока не добавлены.",
+          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
           "lessons": [],
           "teacherAssignments": []
         }
@@ -456,10 +519,16 @@
               "title": "Новый Завет — учебный материал",
               "kind": "doc",
               "access": "student"
+            },
+            {
+              "id": "c2-main-new-testament-questions",
+              "title": "Новый Завет — дополнительные вопросы и ответы",
+              "kind": "json",
+              "access": "student"
             }
           ],
           "literature": [],
-          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
+          "description": "К предмету добавлены учебные материалы и дополнительные материалы для повторения.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -483,10 +552,16 @@
               "title": "Нравственное богословие — учебный материал",
               "kind": "doc",
               "access": "student"
+            },
+            {
+              "id": "c2-main-moral-theology-questions",
+              "title": "Нравственное богословие — дополнительные вопросы и ответы",
+              "kind": "json",
+              "access": "student"
             }
           ],
           "literature": [],
-          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
+          "description": "К предмету добавлены учебные материалы и дополнительные материалы для повторения.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -550,10 +625,16 @@
               "title": "Введение в патрологию",
               "kind": "doc",
               "access": "student"
+            },
+            {
+              "id": "c2-main-patrology-questions",
+              "title": "Патрология — дополнительные вопросы и ответы",
+              "kind": "json",
+              "access": "student"
             }
           ],
           "literature": [],
-          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
+          "description": "К предмету добавлены учебные материалы и дополнительные материалы для повторения.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -624,10 +705,16 @@
               "title": "Догматическое богословие — 2 курс",
               "kind": "docx",
               "access": "student"
+            },
+            {
+              "id": "c2-main-dogmatics-questions",
+              "title": "Догматическое богословие — дополнительные вопросы и ответы",
+              "kind": "json",
+              "access": "student"
             }
           ],
           "literature": [],
-          "description": "К предмету добавлены учебные материалы из библиотеки ПМДС.",
+          "description": "К предмету добавлены учебные материалы и дополнительные материалы для повторения.",
           "lessons": [],
           "teacherAssignments": []
         },
@@ -5875,6 +5962,131 @@
       "originalName": "Чтение на ЦСЯ.doc",
       "kind": "doc",
       "access": "student"
+    },
+    {
+      "id": "c1-intro-theology",
+      "title": "Введение в богословие",
+      "filename": "course-1-intro-theology.docx",
+      "originalName": "Введение в богословие.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Введение в богословие.docx"
+    },
+    {
+      "id": "c1-biblical-history",
+      "title": "Библейская история",
+      "filename": "course-1-biblical-history.docx",
+      "originalName": "Библейская история.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Библейская история.docx"
+    },
+    {
+      "id": "c1-history-culture-ukraine",
+      "title": "История и культура Украины",
+      "filename": "course-1-history-culture-ukraine.docx",
+      "originalName": "История и культура Украины.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/История и культура Украины.docx"
+    },
+    {
+      "id": "c1-logic",
+      "title": "Логика",
+      "filename": "course-1-logic.docx",
+      "originalName": "Логика.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Логика.docx"
+    },
+    {
+      "id": "c1-church-history",
+      "title": "Общецерковная история",
+      "filename": "course-1-church-history.docx",
+      "originalName": "Общецерковная история.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Общецерковная история.docx"
+    },
+    {
+      "id": "c1-ukrainian-language",
+      "title": "Украинский язык — профессиональное направление",
+      "filename": "course-1-ukrainian-language.doc",
+      "originalName": "Украинский язык.doc",
+      "kind": "doc",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Украинский язык.doc"
+    },
+    {
+      "id": "c1-christian-ethics",
+      "title": "Христианская этика",
+      "filename": "course-1-christian-ethics.docx",
+      "originalName": "Христианская этика.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Христианская этика.docx"
+    },
+    {
+      "id": "c1-church-charter",
+      "title": "Церковный устав",
+      "filename": "course-1-church-charter.docx",
+      "originalName": "Церковный устав.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Церковный устав.docx"
+    },
+    {
+      "id": "c1-work-safety",
+      "title": "Безопасность жизнедеятельности и охрана труда",
+      "filename": "course-1-work-safety.docx",
+      "originalName": "Охорона праці, безпека житд.docx",
+      "kind": "docx",
+      "access": "student",
+      "sourcePath": "PMDS_Library/05 — Курс не определён/Охорона праці, безпека житд.docx"
+    },
+    {
+      "id": "c2-main-dogmatics-questions",
+      "title": "Догматическое богословие — дополнительные вопросы и ответы",
+      "filename": "course-2-dogmatics-supplement.json",
+      "originalName": "questions.json",
+      "kind": "json",
+      "access": "student",
+      "readerLabel": "Дополнительный материал из main",
+      "sourceBranch": "main",
+      "sourceNote": "Дополнительный набор из main: 65 вопросов второго курса. Вопросы третьего курса из исходного файла исключены."
+    },
+    {
+      "id": "c2-main-new-testament-questions",
+      "title": "Новый Завет — дополнительные вопросы и ответы",
+      "filename": "course-2-new-testament-supplement.json",
+      "originalName": "new-testament-questions.json",
+      "kind": "json",
+      "access": "student",
+      "readerLabel": "Дополнительный материал из main",
+      "sourceBranch": "main",
+      "sourceNote": "Дополнительный набор из main: 40 вопросов и 120 тем для повторения."
+    },
+    {
+      "id": "c2-main-moral-theology-questions",
+      "title": "Нравственное богословие — дополнительные вопросы и ответы",
+      "filename": "course-2-moral-theology-supplement.json",
+      "originalName": "moral-theology-questions.json",
+      "kind": "json",
+      "access": "student",
+      "readerLabel": "Дополнительный материал из main",
+      "sourceBranch": "main",
+      "sourceNote": "Дополнительный материал из main: второй год обучения, темы 11–22. В исходной разметке также указан 4 курс."
+    },
+    {
+      "id": "c2-main-patrology-questions",
+      "title": "Патрология — дополнительные вопросы и ответы",
+      "filename": "course-2-patrology-supplement.json",
+      "originalName": "patrologiya-questions.json",
+      "kind": "json",
+      "access": "student",
+      "readerLabel": "Дополнительный материал из main",
+      "sourceBranch": "main",
+      "sourceNote": "Дополнительный материал из main. В исходной разметке файла указан 3 курс; он сохранён здесь как дополнительный источник по вашему указанию."
     }
   ],
   "importSummary": {
