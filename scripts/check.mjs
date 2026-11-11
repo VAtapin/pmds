@@ -8,7 +8,7 @@ const data=JSON.parse(readFileSync(join(root,'content/library.json'),'utf8'));
 assert.equal(data.educationMode,'source-study');
 assert.deepEqual(data.courses.map(x=>x.number),[1,2,3,4]);
 assert.equal(data.courses[0].subjects.length,18);assert.equal(data.courses[1].subjects.length,17);assert.equal(data.courses[2].subjects.length,16);assert.equal(data.courses[3].subjects.length,17);
-const subjects=data.courses.flatMap(c=>c.subjects);
+const subjects=data.courses.flatMap(c=>[...c.subjects,...(c.additionalSubjects||[])]);
 const checks=[[3,'dogmatika',38],[4,'sravnitelnoe-bogoslovie',48],[4,'nravstvennoe-bogoslovie',12],[4,'cerkovnoe-iskusstvo',10],[4,'istoriya-cerkvi',39],[4,'kanonicheskoe-pravo',47]];
 for(const [course,slug,n] of checks)assert.equal(subjects.find(s=>s.course===course&&s.slug===slug).chapters.length,n,slug+' author archive preserved');
 for(const doc of data.documents){
@@ -30,7 +30,7 @@ for(const subject of subjects){
  for(const assignment of subject.teacherAssignments||[])assert(data.documents.some(d=>d.id===assignment.sourceId&&d.access==='student'),'Assignment has a supplied public source');
 }
 const course12WordDocuments=data.documents.filter(doc=>doc.access==='student'&&/\.docx?$/i.test(doc.filename||'')&&subjects.some(subject=>[1,2].includes(subject.course)&&subject.documents.some(ref=>ref.id===doc.id)));
-assert.equal(course12WordDocuments.length,23,'All 23 Word documents from courses 1 and 2 are converted');
+assert.equal(course12WordDocuments.length,25,'All 25 Word documents from courses 1 and 2 are converted');
 for(const doc of course12WordDocuments){
  const pagePath=join(dist,'documents',doc.id+'.html');
  assert(existsSync(pagePath),doc.id+' has an HTML reader');
@@ -43,13 +43,14 @@ for(const doc of data.documents.filter(doc=>doc.access==='student'&&/\.docx?$/i.
  if(!doc.html)assert(!existsSync(join(dist,'documents',doc.id+'.html')),doc.id+' from courses 3 and 4 must not gain a new reader');
 }
 
-for(const [course,slug,id] of [[1,'vvedenie-v-bogoslovie','c1-intro-theology'],[1,'bibliynaya-istoriya','c1-biblical-history'],[1,'istoriya-i-kultura-ukrainy','c1-history-culture-ukraine'],[1,'logika','c1-logic'],[1,'obshchecerkovnaya-istoriya','c1-church-history'],[1,'ukrainskiy-yazyk','c1-ukrainian-language'],[1,'hristianskaya-etika','c1-christian-ethics'],[1,'cerkovnyy-ustav','c1-church-charter'],[1,'bezopasnost-zhiznedeyatelnosti','c1-work-safety'],[2,'dogmaticheskoe-bogoslovie','c2-main-dogmatics-questions'],[2,'svyashchennoe-pisanie-novogo-zaveta','c2-main-new-testament-questions'],[2,'moralnoe-bogoslovie','c2-main-moral-theology-questions'],[2,'patrologiya','c2-main-patrology-questions']]){
+for(const [course,slug,id] of [[1,'vvedenie-v-bogoslovie','c1-intro-theology'],[1,'bibliynaya-istoriya','c1-biblical-history'],[1,'istoriya-i-kultura-ukrainy','c1-history-culture-ukraine'],[1,'logika','c1-logic'],[1,'obshchecerkovnaya-istoriya','c1-church-history'],[1,'ukrainskiy-yazyk','c1-ukrainian-language'],[1,'hristianskaya-etika','c1-christian-ethics'],[1,'cerkovnyy-ustav','c1-church-charter'],[1,'bezopasnost-zhiznedeyatelnosti','c1-work-safety'],[2,'dogmaticheskoe-bogoslovie','c2-main-dogmatics-questions'],[2,'svyashchennoe-pisanie-novogo-zaveta','c2-main-new-testament-questions'],[2,'moralnoe-bogoslovie','c2-main-moral-theology-questions'],[2,'patrologiya','c2-main-patrology-questions'],[2,'filosofiya','c2-philosophy-source'],[2,'gomiletika','c2-homiletics-source'],[2,'gomiletika','c2-homiletics-textbook']]){
  const subject=subjects.find(s=>s.course===course&&s.slug===slug),doc=data.documents.find(d=>d.id===id);
  assert(doc&&doc.access==='student',id+' supplementary source is published');assert(subject.documents.some(d=>d.id===id),id+' is attached to the matching subject');
  assert(existsSync(join(dist,'documents',id+'.html')),id+' has a readable HTML page');
  const page=readFileSync(join(dist,'documents',id+'.html'),'utf8');assert(page.includes('Скачать оригинал'),id+' offers the source download');
 }
 assert.equal(data.documents.find(d=>d.id==='c2-main-dogmatics-questions').sourceBranch,'main');
+assert.equal(data.courses[1].additionalSubjects.length,2,'Philosophy and Homiletics are shown separately from the official schedule');
 
 const history=data.documents.find(d=>d.id==='church-history-study');
 assert(history&&history.access==='student','History study text is published');
