@@ -33,8 +33,8 @@ const write=(name,html)=>{const path=join(dist,name);mkdirSync(dirname(path),{re
 const publicDocuments=library.documents.filter(d=>d.access==='student');
 const course12DocumentIds=new Set(library.courses.filter(c=>[1,2].includes(c.number)).flatMap(c=>c.subjects.flatMap(s=>s.documents.map(ref=>ref.id))));
 const convertedWordDocuments=new Map();
-for(const doc of publishedDocuments){
- if(!course12DocumentIds.has(doc.id)||!doc.filename||!/\\.docx?$/i.test(doc.filename))continue;
+for(const doc of publicDocuments){
+ if(!course12DocumentIds.has(doc.id)||!doc.filename||!/\.docx?$/i.test(doc.filename))continue;
  convertedWordDocuments.set(doc.id,await convertWordDocument(join(root,'materials',doc.filename)));
 }
 const publishedDocuments=publicDocuments.map(doc=>convertedWordDocuments.has(doc.id)?{...doc,html:convertedWordDocuments.get(doc.id)}:doc);
